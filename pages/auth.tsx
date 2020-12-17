@@ -1,6 +1,6 @@
-import FirebaseAuth from '../components/FirebaseAuth'
+import FirebaseAuth from '../view/components/FirebaseAuth'
 
-const Auth = () => {
+const Auth: React.FC = () => {
   return (
     <div>
       <p>Sign in</p>
