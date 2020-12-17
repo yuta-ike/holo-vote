@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "api/ogp/top.ts": {
+      "includeFiles": "assets/**"
+    },
+    "api/ogp/word/[wordId].ts": {
+      "includeFiles": "assets/**"
+    }
+  }
+}
