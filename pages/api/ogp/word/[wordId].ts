@@ -1,9 +1,10 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { createCanvas, registerFont } from "canvas";
-import initAdminFirebase from "../../../../utils/auth/initAdminFirebase";
-import Word from "../../../../types/word";
-import { members } from "../../../../data/members";
-import createFrame from "../../../../utils/ogp/createFrame";
+import type { NextApiRequest, NextApiResponse } from "next"
+import * as path from 'path'
+import { createCanvas, registerFont } from "canvas"
+import initAdminFirebase from "../../../../utils/auth/initAdminFirebase"
+import Word from "../../../../types/word"
+import { members } from "../../../../data/members"
+import createFrame from "../../../../utils/ogp/createFrame"
 
 const WIDTH = 1200
 const HEIGHT = 630
@@ -26,8 +27,8 @@ const createOgp = async (req: NextApiRequest, res: NextApiResponse): Promise<voi
 
   const canvas = createCanvas(WIDTH, HEIGHT)
   const ctx = canvas.getContext("2d")
-  registerFont("./assets/fonts/puikko_20201114/puikko-Regular.otf", { family: "puikko" });
-  registerFont("./assets/fonts/M_PLUS_Rounded_1c/MPLUSRounded1c-Medium.ttf", { family: "MPLUS" });
+  registerFont(path.resolve("./assets/fonts/puikko_20201114/puikko-Regular.otf"), { family: "puikko" })
+  registerFont(path.resolve("./assets/fonts/M_PLUS_Rounded_1c/MPLUSRounded1c-Medium.ttf"), { family: "MPLUS" })
 
   createFrame(ctx)
 
