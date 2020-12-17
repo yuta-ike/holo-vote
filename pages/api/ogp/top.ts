@@ -1,10 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import * as path from 'path'
 import { createCanvas, registerFont } from "canvas";
-import initAdminFirebase from "../../../utils/auth/initAdminFirebase";
-import { members } from "../../../data/members";
 import createFrame from "../../../utils/ogp/createFrame";
-import Word from "../../../types/word";
 
 const WIDTH = 1200
 const HEIGHT = 630
@@ -16,8 +13,6 @@ const INNER_HEIGHT = HEIGHT - PADDING_WIDTH_Y * 2
 const PRIMARY_COLOR = "rgb(41, 197, 252)"
 
 const createOgp = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
-  const { db } = initAdminFirebase()
-
   const canvas = createCanvas(WIDTH, HEIGHT)
   const ctx = canvas.getContext("2d")
   registerFont(path.resolve("./assets/fonts/puikko_20201114/puikko-Regular.otf"), { family: "puikko" })
