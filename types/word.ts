@@ -1,12 +1,13 @@
 import Member from "./member"
 import Comment from './comment'
 import { DateTime } from "luxon"
+import Video from "./video"
 
 type Word = {
   id: string
   content: string
   members: Member[]
-  videos: string[]
+  videos: Video[]
   createdAt: DateTime
   comments: Comment[]
 }

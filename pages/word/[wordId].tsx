@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
 import Image from 'next/image'
+import axios from 'axios'
 import Header from '../../view/components/Header'
 import NominateDialog from '../../view/dialog/NominateDialog'
 import Word from '../../types/word'
@@ -20,27 +21,31 @@ import { DateTime } from 'luxon'
 import classNames from 'classnames'
 import Member from '../../types/member'
 import { useRouter } from 'next/router'
+import MemberSelectDialog from '../../view/dialog/MemberSelectDialog'
+import VideoAddDialog from '../../view/dialog/VideoAddDialog'
 
 type SerializedWord = Omit<Word, "comments"> & { comments: SerializedComment[] }
 
 type Props = {
   word: Omit<SerializedWord, "createdAt">
-  ogpUrl: string
 }
 
 type Params = {
   wordId: string
 }
 
-const WordPage: React.FC<Props> = ({ word: _word, ogpUrl }) => {
-  const word: Omit<Word, "createdAt"> = {..._word, comments: _word.comments.map(unserialize)}
+const WordPage: React.FC<Props> = ({ word: _word }) => {
+  const [word, setWord] = useState<Omit<Word, "createdAt">>({..._word, comments: _word.comments.map(unserialize)})
   const router = useRouter()
   const [nominateDialogOpen, setNominateDialogOpen] = useState(false)
   const [selectedMember, setSelectedMember] = useState<null | Member>(null)
   const [voteDialogOpen, setVoteDialogOpen] = useState(false)
+  const [memberSelectDialogOpen, setMemberSelectDialogOpen] = useState(false)
+  const [videoDialogOpen, setVideoDialogOpen] = useState(false)
   const [likedIds, setLikedIds] = useState<string[]>([])
   const [comment, setComment] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const ref = useRef(null)
 
   const disabled = comment.length === 0 || isLoading
 
@@ -84,14 +89,31 @@ const WordPage: React.FC<Props> = ({ word: _word, ogpUrl }) => {
     })
   }
 
-  const handleVideoAdd = async (videoId: string) => {
+  const handleAddMember = async (selectedIds: number[]) => {
     const { db } = initFirebase()
+    const newMemberIds = Array.from(new Set([...word.members.map(member => member.id), ...selectedIds]))
     await db().collection("words").doc(word.id).update({
-      videoIds: db.FieldValue.arrayUnion(videoId),
+      memberIds: newMemberIds,
+    })
+    setWord({ ...word, members: newMemberIds.map(id => members[id - 1]) })
+    setMemberSelectDialogOpen(false)
+    ref.current?.scrollTo({
+      left: 9999,
+      behavior: 'smooth'
     })
   }
 
-  console.log(process.env)
+  const handleVideoAdd = async (videoId: string | null) => {
+    if(videoId == null){
+      setVideoDialogOpen(false)
+      return
+    }
+    await axios.post("/api/video", {
+      videoId, wordId: word.id
+    })
+    setVideoDialogOpen(false)
+    router.reload()
+  }
 
   return (
     <>
@@ -106,11 +128,9 @@ const WordPage: React.FC<Props> = ({ word: _word, ogpUrl }) => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@holovote" />
         <meta name="twitter:url" content={router.asPath} />
-        <meta name="twitter:title" content="【非公式】ホロライブ流行語大賞2020!!" />
-        <meta name="twitter:description" content={`${word.content} ー ${word.members.map(member => member.name).join(" ")}`} />
+        <meta name="twitter:title" content={`${word.content} ー ${word.members.map(member => member.name).join(" ")}`} />
+        <meta name="twitter:description" content={`【非公式】ホロライブ流行語大賞2020!!    ${word.content} ー ${word.members.map(member => member.name).join(" ")}`} />
         <meta name="twitter:image" content={`https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/ogp/word/${word.id}`} />
-        {/* <link rel="shortcut icon" href={'https://t-cr.jp/favicon.ico'} />
-        <link rel="apple-touch-icon" href={'https://t-cr.jp/logo.png'} /> */}
       </Head>
       <Header onClickNominate={() => setNominateDialogOpen(true)} />
       <Link href="/">
@@ -129,12 +149,13 @@ const WordPage: React.FC<Props> = ({ word: _word, ogpUrl }) => {
           <blockquote className="quote-design block relative mt-3 px-12 py-2 self-center text-xl break-all font-bold transition-all hover:tracking-widest">
             {word.content}
           </blockquote>
-          <button
+          <a
+            href={`https://twitter.com/intent/tweet?url=https://${process.env.NEXT_PUBLIC_VERCEL_URL}${router.asPath}&hashtags=${encodeURIComponent(`ホロ流行語大賞_非公式,ホロライブ`)}`}
             className="px-4 py-1 my-3 rounded-full border-twitter text-sm flex items-center
                 transform transition-all hover:bg-twitter hover:border-twitter hover:text-white hover:tracking-wider hover:shadow-md
                 focus:outline-none focus-visible:outline-black active:shadow-none active:scale-95">
             <AiOutlineTwitter className="mr-2"/> ツイートする
-          </button>
+          </a>
           <button
             onClick={() => setVoteDialogOpen(true)}
             className="px-12 py-2 border-2 border-primary rounded-sm text-md tracking-wide
@@ -146,17 +167,17 @@ const WordPage: React.FC<Props> = ({ word: _word, ogpUrl }) => {
         <div className="flex flex-row w-full">
           <section className="w-1/2">
             <h1 className="ml-4">ホロメン情報</h1>
-            <div className="w-full flex flex-row flex-nowrap overflow-x-scroll overscroll-x-contain">
+            <div ref={ref} className="w-full h-full flex flex-row flex-nowrap overflow-x-scroll overscroll-x-contain">
               {
                 word.members.map(member => (
-                  <button key={member.id} onClick={() => setSelectedMember(member)} className="flex-none m-2 w-52 hover:shadow-md p-2 rounded-md group min-w-0">
-                    <Image src="/001.png" width={300} height={300} />
-                    <h1 className="mb-2 text-md break-all">{member.name}</h1>
+                  <button key={member.id} onClick={() => setSelectedMember(member)} className="flex-none flex flex-col items-center mx-2 my-4 w-52 hover:shadow-md p-2 rounded-md group min-w-0">
+                    <Image src="/001.png" width={220} height={220} />
+                    <h1 className="mt-2 mb-2 text-md break-all">{member.name}</h1>
                     <p className="text-sm ">{member.catchphrase}</p>
                   </button>
                 ))
               }
-              <button className="flex-none m-2 w-52 hover:shadow-md p-2 rounded-md group min-w-0">
+              <button className="flex-none mx-2 my-4 w-52 hover:shadow-md p-2 rounded-md group min-w-0" onClick={() => setMemberSelectDialogOpen(true)}>
                 <div className="p-2 rounded-md bg-gray-100 w-full h-full flex flex-col items-center justify-center">
                   <BiPlus className="mb-2 text-2xl" />
                   関係するホロメンを追加する
@@ -166,16 +187,16 @@ const WordPage: React.FC<Props> = ({ word: _word, ogpUrl }) => {
           </section>
           <section className="w-1/2">
             <h1 className="ml-4">関連動画</h1>
-            <div className="w-full flex flex-row flex-nowrap overflow-x-scroll overscroll-x-contain">
+            <div className="w-full h-full flex flex-row flex-nowrap overflow-x-scroll overscroll-x-contain">
               {
                 word.videos.map(video => (
-                  <a href="" className="flex-none m-2 w-52 hover:shadow-md p-2 rounded-md group min-w-0">
-                    <Image src="http://img.youtube.com/vi/uRB1G0cKpIk/mqdefault.jpg" width={320} height={180} />
-                    <h1 className="mb-2 text-sm group-hover:underline break-all">【#ホロWACCA】『ぺこみこ大戦争！！』フルMV【さくらみこ/兎田ぺこら ホロライブ】</h1>
+                  <a href={`https://www.youtube.com/watch?v=${video.videoId}`} key={video.videoId} className="flex-none mx-2 my-4 w-52 hover:shadow-md p-2 rounded-md group min-w-0">
+                    <Image src={video.thumbnail} width={320} height={220} />
+                    <h1 className="mb-2 text-sm group-hover:underline break-all">{video.title}</h1>
                   </a>
                 ))
               }
-              <button className="flex-none m-2 w-52 hover:shadow-md p-2 rounded-md group min-w-0 h-64">
+              <button className="flex-none mx-2 my-4 w-52 hover:shadow-md p-2 rounded-md group min-w-0" onClick={() => setVideoDialogOpen(true)}>
                 <div className="p-2 rounded-md bg-gray-100 w-full h-full flex flex-col items-center justify-center">
                   <BiPlus className="mb-2 text-3xl"/>
                   関連動画を追加する
@@ -245,12 +266,14 @@ const WordPage: React.FC<Props> = ({ word: _word, ogpUrl }) => {
         <MemberDialog member={selectedMember} open={selectedMember != null} onClose={() => setSelectedMember(null)}/>
       }
       <VoteDialog open={voteDialogOpen} onClose={() => setVoteDialogOpen(false)} word={word} />
+      <MemberSelectDialog open={memberSelectDialogOpen} onClose={handleAddMember}/>
+      <VideoAddDialog open={videoDialogOpen} onClose={handleVideoAdd}/>
     </>
   )
 }
 
-const getWordData = async (wordId: string): Promise<[Omit<SerializedWord, "createdAt">, string]> => {
-  const { db, storage } = initAdminFirebase()
+const getWordData = async (wordId: string) => {
+  const { db } = initAdminFirebase()
   const [wordSnapshot, commentSnapshots] = await Promise.all([
     db().collection("words").doc(wordId).get(),
     db().collection("words").doc(wordId).collection("comments").orderBy('createdAt').get(),
@@ -269,7 +292,7 @@ const getWordData = async (wordId: string): Promise<[Omit<SerializedWord, "creat
   const word: Omit<SerializedWord, "createdAt"> = {
     id: wordSnapshot.id,
     content: wordData.content,
-    members: wordData.memberIds.map((id: number) => members[id - 1]),
+    members: wordData.memberIds.map((id: number) => members[id - 1]).reverse(),
     videos: wordData.videos,
     comments: commentData.map<SerializedComment>((data, i) => ({
       id: data.id,
@@ -279,32 +302,13 @@ const getWordData = async (wordId: string): Promise<[Omit<SerializedWord, "creat
       like: data.like,
     })).reverse(),
   }
-
-  let ogpUrl = ""//wordData.ogpUrl
-
-  // if(ogpUrl == null){
-  //   const canvas = createCanvas(WIDTH, HEIGHT)
-  //   const ctx = canvas.getContext("2d")
-
-  //   ctx.fillStyle = "#FFF"
-  //   ctx.fillRect(DX, DY, WIDTH, HEIGHT)
-
-  //   const buffer = canvas.toBuffer()
-  //   const path = `ogp/${wordId}`
-  //   const file = storage().bucket().file(path)
-  //   await file.save(buffer)
-  //   await file.setMetadata({ contentType: 'image/png' })
-  //   ogpUrl = `https://firebasestorage.googleapis.com/v0/b/holo-vote/o/${encodeURIComponent(path)}?alt=media`
-  // }
-
-  
-  return [word, ogpUrl]
+  return word
 }
 
 export const getServerSideProps: GetServerSideProps<Props, Params> = async ({ res, params: { wordId } }) => {
   try{
-    const [word, ogpUrl] = await getWordData(wordId)
-    return { props: { word, ogpUrl } }
+    const word = await getWordData(wordId)
+    return { props: { word } }
   }catch(e){
     console.log(e)
     res.setHeader('Location', '/')

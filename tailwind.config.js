@@ -23,7 +23,7 @@ module.exports = {
         }
       },
       letterSpacing: {
-        widest: '.25em',
+        widest: '.15em',
       },
     },
   },

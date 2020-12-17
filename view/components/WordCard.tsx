@@ -22,7 +22,7 @@ const WordCard: React.FC<Props> = ({ word }) => {
         <section
           tabIndex={0}
           role="button"
-          className="flex flex-col items-start w-80 p-4 m-2 bg-gradient-to-r from-primary to-primary-light text-white rounded-md
+          className="flex flex-col flex-shrink-0 items-start w-80 p-4 m-2 bg-gradient-to-r from-primary to-primary-light text-white rounded-md
             cursor-pointer shadow-lg
             transform duration-200 transition-all focus-visible:outline-black focus:outline-none focus:shadow-none hover:scale-105 focus:scale-95">
           <Image className="rounded-full" src="/monster01.png" width={50} height={50} />

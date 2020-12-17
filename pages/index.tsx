@@ -15,6 +15,7 @@ import initAdminFirebase from '../utils/auth/initAdminFirebase'
 import { unserialize } from '../types/word'
 import shuffle from '../utils/shuffle'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 
 type Props = {
   words: Omit<SerializedWord, "comments">[]
@@ -43,7 +44,6 @@ const Index: React.FC<Props> = ({ words: _words }) => {
 
   const handleNominateDialogClose = () => {
     setNominateDialogOpen(false)
-    router.reload()
   }
   
   useEffect(() => {
@@ -67,6 +67,21 @@ const Index: React.FC<Props> = ({ words: _words }) => {
 
   return (
     <>
+      <Head>
+        <title>ホロライブ流行語大賞【非公式】</title>
+        <meta property="og:title" content="【非公式】ホロライブ流行語大賞2020!!" />
+        <meta property="og:description" content={`ホロライブファンでホロライブ流行語大賞を決めませんか？ぜひご参加ください!!`} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={router.asPath} />
+        <meta property="og:image" content={`/api/ogp/word/top`} />
+        <meta property="og:site_name" content="【非公式】ホロライブ流行語大賞2020!!" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@holovote" />
+        <meta name="twitter:url" content={router.asPath} />
+        <meta name="twitter:title" content="【非公式】ホロライブ流行語大賞2020!!" />
+        <meta name="twitter:description" content={`ホロライブファンでホロライブ流行語大賞を決めませんか？ぜひご参加ください!!`} />
+        <meta name="twitter:image" content={`https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/ogp/top`} />
+      </Head>
       <div className="bg-gray-50">
         <Header onClickNominate={() => setNominateDialogOpen(true)}/>
         <div className="m-8 px-4 py-8 bg-white min-h-screen round-2 shadow-lg flex flex-col items-center">
