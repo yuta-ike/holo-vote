@@ -1,9 +1,6 @@
 {
   "functions": {
-    "api/ogp/top.ts": {
-      "includeFiles": "assets/**"
-    },
-    "api/ogp/word/[wordId].ts": {
+    "pages/api/ogp/**/*.ts": {
       "includeFiles": "assets/**"
     }
   }
