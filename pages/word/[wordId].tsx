@@ -100,7 +100,7 @@ const WordPage: React.FC<Props> = ({ word: _word, ogpUrl }) => {
         <meta property="og:title" content="【非公式】ホロライブ流行語大賞2020!!"/>
         <meta property="og:description" content={`${word.content} ー ${word.members.map(member => member.name).join(" ")}`} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={`${process.env.VERCEL_URL}${router.asPath}`} />
+        <meta property="og:url" content={router.asPath} />
         <meta property="og:image" content={`/api/ogp/word/${word.id}`} />
         <meta property="og:site_name" content="【非公式】ホロライブ流行語大賞2020!!" />
         <meta name="twitter:card" content="summary_large_image" />
@@ -108,7 +108,7 @@ const WordPage: React.FC<Props> = ({ word: _word, ogpUrl }) => {
         <meta name="twitter:url" content={router.asPath} />
         <meta name="twitter:title" content="【非公式】ホロライブ流行語大賞2020!!" />
         <meta name="twitter:description" content={`${word.content} ー ${word.members.map(member => member.name).join(" ")}`} />
-        <meta name="twitter:image" content={`/api/ogp/word/${word.id}`} />
+        <meta name="twitter:image" content={`${process.env.VERCEL_URL}/api/ogp/word/${word.id}`} />
         {/* <link rel="shortcut icon" href={'https://t-cr.jp/favicon.ico'} />
         <link rel="apple-touch-icon" href={'https://t-cr.jp/logo.png'} /> */}
       </Head>
