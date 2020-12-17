@@ -91,7 +91,7 @@ const WordPage: React.FC<Props> = ({ word: _word, ogpUrl }) => {
     })
   }
 
-  console.log(router)
+  console.log(process.env)
 
   return (
     <>
@@ -108,7 +108,7 @@ const WordPage: React.FC<Props> = ({ word: _word, ogpUrl }) => {
         <meta name="twitter:url" content={router.asPath} />
         <meta name="twitter:title" content="【非公式】ホロライブ流行語大賞2020!!" />
         <meta name="twitter:description" content={`${word.content} ー ${word.members.map(member => member.name).join(" ")}`} />
-        <meta name="twitter:image" content={`${process.env.VERCEL_URL}/api/ogp/word/${word.id}`} />
+        <meta name="twitter:image" content={`${process.env.NEXT_PUBLIC_VERCEL_URL}/api/ogp/word/${word.id}`} />
         {/* <link rel="shortcut icon" href={'https://t-cr.jp/favicon.ico'} />
         <link rel="apple-touch-icon" href={'https://t-cr.jp/logo.png'} /> */}
       </Head>
