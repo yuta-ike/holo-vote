@@ -91,14 +91,16 @@ const WordPage: React.FC<Props> = ({ word: _word, ogpUrl }) => {
     })
   }
 
+  console.log(router)
+
   return (
     <>
       <Head>
         <title>ホロライブ流行語大賞【非公式】</title>
         <meta property="og:title" content="【非公式】ホロライブ流行語大賞2020!!"/>
         <meta property="og:description" content={`${word.content} ー ${word.members.map(member => member.name).join(" ")}`} />
-        <meta property="og:type" content="blog" />
-        <meta property="og:url" content={router.asPath} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`${process.env.VERCEL_URL}${router.asPath}`} />
         <meta property="og:image" content={`/api/ogp/word/${word.id}`} />
         <meta property="og:site_name" content="【非公式】ホロライブ流行語大賞2020!!" />
         <meta name="twitter:card" content="summary_large_image" />
