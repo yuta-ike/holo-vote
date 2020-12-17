@@ -1,6 +1,7 @@
 import { Dialog } from '@material-ui/core'
 import Image from 'next/image'
 import React from 'react'
+import Word from '../../types/word'
 import Transition from './transition/Transition'
 
 type Props = {
@@ -9,7 +10,7 @@ type Props = {
   word: Word
 }
 
-const WordDialog: React.FC<Props> = ({ open, onClose, word }) => {
+const PickupWordDialog: React.FC<Props> = ({ open, onClose, word }) => {
   return (
     <Dialog
       open={open}
@@ -33,4 +34,4 @@ const WordDialog: React.FC<Props> = ({ open, onClose, word }) => {
   )
 }
 
-export default WordDialog
+export default PickupWordDialog
