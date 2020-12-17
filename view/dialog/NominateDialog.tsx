@@ -9,6 +9,8 @@ import initFirebase from '../../utils/auth/initFirebase'
 import { useRouter } from 'next/router'
 import classNames from 'classnames'
 import MessageDialog from './MessageDialog'
+import useIsSp from '../../utils/hooks/useIsSp'
+import { MdClose } from 'react-icons/md'
 
 type Props = {
   open: boolean,
@@ -64,14 +66,25 @@ const NominateDialog: React.FC<Props> = ({ open, onClose }) => {
     if(!isLoading) onClose()
   }
 
+  const fullScreen = useIsSp()
+
   return (
     <>
       <Dialog
         open={open}
         TransitionComponent={Transition}
         onClose={handleClose}
+        fullScreen={fullScreen}
       >
-        <DialogTitle>流行語ノミネート</DialogTitle>
+        <div className="px-4 py-2 sm:mt-4 flex flex-row items-center justify-between">
+          <h1 className="mx-2 text-lg">流行語ノミネート</h1>
+          {
+            fullScreen &&
+            <button onClick={handleClose} className="p-4 rounded-full transition-all hover:bg-gray-100">
+              <MdClose />
+            </button>
+          }
+        </div>
         <DialogContent>
           <div className="mt-4 mb-2">あなたの思う流行語</div>
           <TextField className="mt-2" value={word} onChange={e => setWord(e.target.value)} disabled={isLoading} label="流行語" required variant="outlined" fullWidth />

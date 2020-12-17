@@ -23,6 +23,7 @@ import Member from '../../types/member'
 import { useRouter } from 'next/router'
 import MemberSelectDialog from '../../view/dialog/MemberSelectDialog'
 import VideoAddDialog from '../../view/dialog/VideoAddDialog'
+import useIsSp from '../../utils/hooks/useIsSp'
 
 type SerializedWord = Omit<Word, "comments"> & { comments: SerializedComment[] }
 
@@ -115,6 +116,8 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
     router.reload()
   }
 
+  const fullScreen = useIsSp()
+
   return (
     <>
       <Head>
@@ -133,12 +136,15 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
         <meta name="twitter:image" content={`https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/ogp/word/${word.id}`} />
       </Head>
       <Header onClickNominate={() => setNominateDialogOpen(true)} />
-      <Link href="/">
-        <button className="ml-8 my-2 text-gray-500 focus-visible:outline-black focus:outline-none">{"戻る"}</button>
-      </Link>
-      <div className="mx-8 px-4 py-8 bg-white min-h-screen round-2 shadow-lg flex flex-col items-center">
-        <section className="sticky z-40 top-24 flex flex-col items-start text-center w-full py-2 bg-gradient-to-r from-primary to-primary-light text-white shadow-lg">
-          <blockquote className="w-full self-center my-1 text-2xl italic break-all">
+      {/* {
+        !fullScreen &&
+        <Link href="/">
+          <button className="ml-8 my-2 text-gray-500 focus-visible:outline-black focus:outline-none">{"戻る"}</button>
+        </Link>
+      } */}
+      <div className="sm:mx-8 px-4 py-8 bg-white min-h-screen round-2 shadow-lg flex flex-col items-center">
+        <section className="sticky z-40 sm:top-20 top-16 w-screen flex flex-col items-start text-center py-2 bg-gradient-to-r from-primary to-primary-light text-white shadow-lg">
+          <blockquote className="w-full self-center my-1 text-md sm:text-2xl italic break-all">
             {word.content}
           </blockquote>
         </section>
@@ -146,32 +152,34 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
           <div className="my-4">
             \ 投票して盛り上げよう!! /
           </div>
-          <blockquote className="quote-design block relative mt-3 px-12 py-2 self-center text-xl break-all font-bold transition-all hover:tracking-widest">
+          <blockquote className="quote-design block relative my-3 px-12 py-2 self-center text-xl break-all font-bold transition-all hover:tracking-widest">
             {word.content}
           </blockquote>
           <a
             href={`https://twitter.com/intent/tweet?url=https://${process.env.NEXT_PUBLIC_VERCEL_URL}${router.asPath}&hashtags=${encodeURIComponent(`ホロ流行語大賞_非公式,ホロライブ`)}`}
-            className="px-4 py-1 my-3 rounded-full border-twitter text-sm flex items-center
-                transform transition-all hover:bg-twitter hover:border-twitter hover:text-white hover:tracking-wider hover:shadow-md
+            className="px-4 py-2 my-4 rounded-full border-twitter text-sm flex items-center
+                transform transition-all bg-twitter text-white hover:shadow-md
                 focus:outline-none focus-visible:outline-black active:shadow-none active:scale-95">
             <AiOutlineTwitter className="mr-2"/> ツイートする
           </a>
           <button
             onClick={() => setVoteDialogOpen(true)}
-            className="px-12 py-2 border-2 border-primary rounded-sm text-md tracking-wide
+            className="px-12 py-2 mt-2 border-2 border-primary rounded-sm text-md tracking-wide
                 transform transition-all hover:bg-primary-light hover:border-primary-light hover:text-white hover:tracking-wider hover:shadow-md
                 focus:outline-none focus-visible:outline-black active:shadow-none active:scale-95">
             コレに投票する!!
           </button>
         </div>
-        <div className="flex flex-row w-full">
-          <section className="w-1/2">
+        <div className="flex flex-col sm:flex-row w-full">
+          <section className="sm:w-1/2">
             <h1 className="ml-4">ホロメン情報</h1>
             <div ref={ref} className="w-full h-full flex flex-row flex-nowrap overflow-x-scroll overscroll-x-contain">
               {
                 word.members.map(member => (
                   <button key={member.id} onClick={() => setSelectedMember(member)} className="flex-none flex flex-col items-center mx-2 my-4 w-52 hover:shadow-md p-2 rounded-md group min-w-0">
-                    <Image src="/001.png" width={220} height={220} />
+                    <div className="w-36">
+                      <Image src="/001.png" width={220} height={220} />
+                    </div>
                     <h1 className="mt-2 mb-2 text-md break-all">{member.name}</h1>
                     <p className="text-sm ">{member.catchphrase}</p>
                   </button>
@@ -185,7 +193,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
               </button>
             </div>
           </section>
-          <section className="w-1/2">
+          <section className="sm:w-1/2">
             <h1 className="ml-4">関連動画</h1>
             <div className="w-full h-full flex flex-row flex-nowrap overflow-x-scroll overscroll-x-contain">
               {
@@ -229,34 +237,41 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
               投稿
             </button>
           </div>
-          <section>
-          {
-            word.comments.filter(comment => comment.content !== "").map((comment, i) => (
-              <section id={`${comment.serialNumber}`} key={comment.id} className={classNames(i === 0 && "border-t", "border-b border-gray-200 py-2")}>
-                <div className="flex justify-between text-sm items-center">
-                  <div>#{`${comment.serialNumber}`.padStart(3, "0")}</div><div>{comment.createdAt.toFormat("mm/dd")}</div>
-                </div>
-                <p className="px-1 text-center">{comment.content}</p>
-                <div>
-                  <button
-                    className={classNames("ml-auto flex items-center focus-visible:outline-black focus:outline-none px-2 py-1 border rounded-full",
-                      likedIds.includes(comment.id) ? "text-primary border-primary" : "text-black border-transparent")}
-                    onClick={() => {
-                      if(likedIds.includes(comment.id)) {
-                        handleLikeRemove(comment.id)
-                      }else{
-                        handleLikeAdd(comment.id)
-                      }
-                    }}
-                    title="いいね"
-                  >
-                    <MdThumbUp className="mr-1"/>
-                    <span className="text-sm">{(comment.like.length - (comment.like.includes(uid.current) ? 1 : 0)) + (likedIds.includes(comment.id) ? 1 : 0)}</span>
-                  </button>
-                </div>
-              </section>
-            ))
-          }
+          <section className="mb-72">
+            {
+              word.comments.filter(comment => comment.content !== "").map((comment, i) => (
+                <section id={`${comment.serialNumber}`} key={comment.id} className={classNames(i === 0 && "border-t", "border-b border-gray-200 py-2")}>
+                  <div className="flex justify-between text-sm items-center">
+                    <div>#{`${comment.serialNumber}`.padStart(3, "0")}</div><div>{comment.createdAt.toFormat("mm/dd")}</div>
+                  </div>
+                  <p className="px-1 text-center">{comment.content}</p>
+                  <div>
+                    <button
+                      className={classNames("ml-auto flex items-center focus-visible:outline-black focus:outline-none px-2 py-1 border rounded-full",
+                        likedIds.includes(comment.id) ? "text-primary border-primary" : "text-black border-transparent")}
+                      onClick={() => {
+                        if(likedIds.includes(comment.id)) {
+                          handleLikeRemove(comment.id)
+                        }else{
+                          handleLikeAdd(comment.id)
+                        }
+                      }}
+                      title="いいね"
+                    >
+                      <MdThumbUp className="mr-1"/>
+                      <span className="text-sm">{(comment.like.length - (comment.like.includes(uid.current) ? 1 : 0)) + (likedIds.includes(comment.id) ? 1 : 0)}</span>
+                    </button>
+                  </div>
+                </section>
+              ))
+            }
+            {
+              word.comments.length === 0 && (
+                <section className="text-center text-gray-400">
+                  コメントはまだ投稿されていません<br/>コメントを投稿して盛り上げよう!!
+                </section>
+              )
+            }
           </section>
         </section>
       </div>

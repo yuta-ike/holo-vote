@@ -84,23 +84,23 @@ const Index: React.FC<Props> = ({ words: _words }) => {
       </Head>
       <div className="bg-gray-50">
         <Header onClickNominate={() => setNominateDialogOpen(true)}/>
-        <div className="m-8 px-4 py-8 bg-white min-h-screen round-2 shadow-lg flex flex-col items-center">
-          <dl className="mx-2 p-4 bg-gray-50 text-black w-full flex flex-row">
-            <div className="flex-1 text-center">
-              <dt className="inline-block text-sm">現在のノミネート数</dt>
-              <dd className="inline-block text-2xl ml-2 font-bold text-primary">120</dd>
+        <div className="sm:m-8 px-4 pt-8 pb-48 bg-white min-h-screen round-2 shadow-lg flex flex-col items-center">
+          <dl className="sm:mx-2 p-2 sm:p-4 bg-gray-50 text-black w-full flex flex-row">
+            <div className="flex-1 flex flex-col sm:flex-row text-center">
+              <dt className="inline-block text-sm">ノミネート数</dt>
+              <dd className="inline-block text-2xl sm:ml-2 font-bold text-primary">{words.length.toString()}</dd>
             </div>
-            <div className="flex-1 text-center">
+            <div className="flex-1 flex flex-col sm:flex-row text-center">
               <dt className="inline-block text-sm">ノミネート〆切</dt>
-              <dd className="inline-block text-2xl ml-2 font-bold text-primary">未定</dd>
+              <dd className="inline-block text-2xl sm:ml-2 font-bold text-primary">未定</dd>
             </div>
-            <div className="flex-1 text-center">
+            <div className="flex-1 flex flex-col sm:flex-row text-center">
               <dt className="inline-block text-sm">投票開始</dt>
-              <dd className="inline-block text-2xl ml-2 font-bold text-primary">未定</dd>
+              <dd className="inline-block text-2xl sm:ml-2 font-bold text-primary">未定</dd>
             </div>
           </dl>
 
-          <section className="mx-2 my-8 p-4 border-solid border-primary border-2 w-full text-sm">
+          <section className="mx-2 my-4 sm:my-8 p-4 border-solid border-primary border-2 w-full text-sm">
             ホロライブ流行語大賞2020（非公式）は、「ノミネート期間」と「投票期間」に分かれています。
             「ノミネート期間」では、ホロライブファンのみなさんから、ホロライブ流行語のノミネート（登録）を募集します。
             ノミネートされた言葉の中から投票を行い、流行語を決定します。投票は「投票期間」中にのみ可能です。
@@ -142,7 +142,7 @@ const Index: React.FC<Props> = ({ words: _words }) => {
           
           <article className="self-start w-full my-8">
             <h1 className="text-lg mb-4">ノミネート一覧</h1>
-            <div className="flex flex-row text-sm mt-4 mb-2 w-full overflow-hidden">
+            <div className="flex flex-row text-sm mt-4 mb-2 w-full overflow-hidden overflow-x-scroll overscroll-x-contain sm:overflow-x-auto">
               <button className={classNames("flex flex-row flex-shrink-0 items-center mr-2 px-2 focus-visible:outline-black focus:outline-none", !sort && "mr-3")} onClick={() => setSort(!sort)}>
                 <MdArrowDownward className={classNames("transform transition-all", !sort && "rotate-180")}/>
                 { sort ? "新しい順" : "古い順" }
@@ -152,7 +152,7 @@ const Index: React.FC<Props> = ({ words: _words }) => {
                 {
                   filter == null ? "全員" : (
                     <div
-                      className="scroll-wrapper flex flex-row flex-nowrap items-center my-2 overflow-x-scroll overscroll-x-contain whitespace-nowrap px-2 cursor-pointer"
+                      className="scroll-wrapper flex flex-row flex-nowrap items-center my-2 whitespace-nowrap px-2 cursor-pointer sm:overflow-x-scroll sm:overscroll-x-contain"
                     >
                       {filter.map(member => <NameChip key={member.id} member={member} selected={true} selectable={false}/>)}
                     </div>
@@ -167,7 +167,7 @@ const Index: React.FC<Props> = ({ words: _words }) => {
         </div>
       </div>
       <NominateDialog open={nominateDialogOpen} onClose={handleNominateDialogClose}/>
-      <MemberSelectDialog open={memberSelectDialog} init={(filter ?? members).map(member => member.id)} onClose={handleMemberSelectDone}/>
+      <MemberSelectDialog open={memberSelectDialog} init={filter == null ? [] : (filter ?? members).map(member => member.id)} onClose={handleMemberSelectDone}/>
     </>
   )
 }

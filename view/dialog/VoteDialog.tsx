@@ -21,15 +21,19 @@ const VoteDialog: React.FC<Props> = ({ open, onClose, word }) => {
     >
       <DialogTitle id="alert-dialog-slide-title">投票</DialogTitle>
       <DialogContent>
-        ごめんなさい...<br />
-        投票は投票期間中のみ可能です<br /><br />
-        投票開始時期：未定<br />
-        <button
-          onClick={onClose}
-          className="px-8 py-2 my-4 bg-gradient-to-r from-primary to-primary-light text-white rounded-full shadow-lg
-            transform duration-200 transition-all focus-visible:outline-black focus:outline-none focus:shadow-none hover:scale-105 focus:scale-95">
-          OK!!
-        </button>
+        <p>
+          ごめんなさい...<br />
+          投票は投票期間中のみ可能です<br /><br />
+          投票開始時期：未定<br />
+        </p>
+        <div className="flex flex-row justify-end mt-4">
+          <button
+            onClick={onClose}
+            className="px-8 py-2 my-4 bg-gradient-to-r from-primary to-primary-light text-white rounded-full shadow-lg
+              transform duration-200 transition-all focus-visible:outline-black focus:outline-none focus:shadow-none hover:scale-105 focus:scale-95">
+            OK!!
+          </button>
+        </div>
       </DialogContent>
     </Dialog>
   )

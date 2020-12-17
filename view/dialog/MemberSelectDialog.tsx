@@ -10,6 +10,10 @@ import classNames from 'classnames'
 import DialogActions from '@material-ui/core/DialogActions'
 import NameChip from '../components/NameChip'
 import { useEffectWhenLarge } from '../../utils/hooks/useEffectWhen'
+import useMediaQuery from '@material-ui/core/useMediaQuery'
+import { useTheme } from '@material-ui/core/styles'
+import useIsSp from '../../utils/hooks/useIsSp'
+import { MdClose } from 'react-icons/md'
 
 type Props = {
   open: boolean
@@ -41,15 +45,24 @@ const MemberSelectDialog: React.FC<Props> = ({ open, onClose, init = [] }) => {
     })
   }, selected.length)
 
+  const fullScreen = useIsSp()
+
   return (
     <Dialog
       open={open}
       TransitionComponent={Transition}
-      onClose={() => onClose([])}
+      onClose={() => onClose(init)}
+      fullScreen={fullScreen}
     >
-      <DialogTitle className="shadow-md pb-0">
-        メンバー選択
-      </DialogTitle>
+      <div className="shadow-md px-4 py-2 flex flex-row items-center justify-between">
+        <h1 className="my-2">メンバー選択</h1>
+        {
+          fullScreen &&
+          <button onClick={() => onClose(init)} className="p-4 my-4 rounded-full transition-all hover:bg-gray-100">
+            <MdClose/>
+          </button>
+        }
+      </div>
       <DialogContent className="px-0">
         <style>{`
           .name-chip > div:first-child{
@@ -84,10 +97,10 @@ const MemberSelectDialog: React.FC<Props> = ({ open, onClose, init = [] }) => {
       <DialogActions className="dialog-action-area flex flex-col">
         <style>{`
           .dialog-action-area {
-             box-shadow: 0 -6px 6px -2px rgba(0, 0, 0, 0.05);
+             box-shadow: 0 -20px 25px -5px rgba(0, 0, 0, 0.1);
           }
         `}</style>
-        <div ref={ref} className="scroll-wrapper flex flex-row flex-nowrap my-2 overflow-x-scroll overscroll-x-contain whitespace-nowrap w-full px-2">
+        <div ref={ref} className="scroll-wrapper flex flex-row flex-nowrap overflow-x-scroll overscroll-x-contain whitespace-nowrap w-full px-2 py-2">
           {
             selected.map(memberId => members[memberId - 1]).map(member => (
               <NameChip key={member.id} member={member} onClick={() => handleToggle(member.id)} selected={selected.includes(member.id)} />
@@ -103,12 +116,15 @@ const MemberSelectDialog: React.FC<Props> = ({ open, onClose, init = [] }) => {
           >
             全選択
           </button>
-          <button
-            onClick={() => onClose(init)}
-            className="px-8 py-2 my-4 mr-4 bg-gray-300 text-white rounded-full
-              transform duration-200 transition-all focus-visible:outline-black focus:outline-none focus:shadow-none hover:scale-105 focus:scale-95">
-            キャンセル
-          </button>
+          {
+            !fullScreen &&
+            <button
+              onClick={() => onClose(init)}
+              className="px-8 py-2 my-4 mr-4 bg-gray-300 text-white rounded-full
+                transform duration-200 transition-all focus-visible:outline-black focus:outline-none focus:shadow-none hover:scale-105 focus:scale-95">
+              キャンセル
+            </button>
+          }
           <button
             onClick={() => onClose(selected)}
             disabled={selected.length === 0}

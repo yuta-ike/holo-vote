@@ -26,8 +26,8 @@ const MemberDialog: React.FC<Props> = ({ open, onClose, member }) => {
     >
       <DialogTitle>{member.name}<span className="ml-4 text-sm">{member.chineseName}/{member.englishName}</span></DialogTitle>
       <DialogContent>
-        <div className="flex flex-wrap sm:flex-nowrap">
-          <div className="flex-shrink-0">
+        <div className="flex flex-wrap mb-4 justify-center sm:flex-nowrap">
+          <div className="flex-shrink-0 sm:mr-2">
             <Image className="flex-0" src="/001.png" width={220} height={220}/>
           </div>
           <div>
