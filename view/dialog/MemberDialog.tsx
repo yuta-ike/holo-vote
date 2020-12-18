@@ -28,7 +28,7 @@ const MemberDialog: React.FC<Props> = ({ open, onClose, member }) => {
       <DialogContent>
         <div className="flex flex-wrap mb-4 justify-center sm:flex-nowrap">
           <div className="flex-shrink-0 sm:mr-2">
-            <Image className="flex-0" src="/001.png" width={220} height={220}/>
+            <Image className="flex-0 bg-white" src={`/${member.imageAPath}`} width={220} height={220}/>
           </div>
           <div>
             <div className="mt-4 mb-2">{member.catchphrase}</div>

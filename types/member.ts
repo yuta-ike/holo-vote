@@ -18,6 +18,8 @@ type Member = {
   bilibiliId: string
   twitterId: string
   twitterHasTags: string[]
+  imageAPath: string
+  imageBPath: string
 }
 
 export default Member

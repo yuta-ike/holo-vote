@@ -11,7 +11,9 @@ const data = [
     'UCp6993wxpyDPHUpavwDFqgg',
     '286179206',
     'tokino_sora',
-    'ときのそら'
+    'ときのそら',
+    'sora_a.webp',
+    'sora_b.webp',
   ],
   [
     'ロボ子さん',
@@ -23,7 +25,9 @@ const data = [
     'UCDqI2jOz0weumE8s7paEk6g',
     '20813493',
     'robocosan',
-    'robo_co ろぼさー'
+    'robo_co ろぼさー',
+    'roboco_a.webp',
+    'roboco_b.webp',
   ],
   [
     'さくらみこ',
@@ -35,7 +39,9 @@ const data = [
     'UC-hM6YJuNYVAmUWxeIr9FeA',
     '366690056',
     'sakuramiko35',
-    'さくらみこ'
+    'さくらみこ',
+    'miko_a.webp',
+    'miko_b.webp',
   ],
   [
     '星街すいせい',
@@ -47,7 +53,9 @@ const data = [
     'UC5CwaMl1eIgY8h02uZw7u8A',
     '9034870',
     'suisei_hosimati',
-    '星街すいせい 星詠み'
+    '星街すいせい 星詠み',
+    'suisei_a.webp',
+    'suisei_b.webp',
   ],
   [
     '白上フブキ',
@@ -59,7 +67,9 @@ const data = [
     'UCdn5BQ06XqgXoAxIhbqw5Rg',
     '332704117',
     'shirakamifubuki',
-    '白上フブキ すこん部'
+    '白上フブキ すこん部',
+    'hubuki_a.webp',
+    'hubuki_b.webp',
   ],
   [
     '夏色まつり',
@@ -71,7 +81,9 @@ const data = [
     'UCQ0UDLQCjY0rmuxCDE38FGg',
     '336731767',
     'natsuiromatsuri',
-    '夏色まつり まつりす'
+    '夏色まつり まつりす',
+    'matsuri_a.webp',
+    'matsuri_b.webp',
   ],
   [
     '夜空メル',
@@ -83,7 +95,9 @@ const data = [
     'UCD8HOxPs4Xvsm8H0ZxXGiBw',
     '389856447',
     'yozoramel',
-    '夜空メル かぷ民'
+    '夜空メル かぷ民',
+    'mel_a.webp',
+    'mel_b.webp',
   ],
   [
     '赤井はあと',
@@ -95,7 +109,9 @@ const data = [
     'UC1CfXB_kRs3C-zaeTG3oGyg',
     '339567211',
     'akaihaato',
-    '赤井はあと はあとん'
+    '赤井はあと はあとん',
+    'haato_a.webp',
+    'haato_b.webp',
   ],
   [
     'アキ・ローゼンタール',
@@ -107,7 +123,9 @@ const data = [
     'UCFTLzh12_nrtzqBPsTCqenA',
     '389857131',
     'akirosenthal',
-    'アキ・ローゼンタール ロゼ隊'
+    'アキ・ローゼンタール ロゼ隊',
+    'aki_a.webp',
+    'aki_b.webp',
   ],
   [
     '湊あくあ',
@@ -119,7 +137,9 @@ const data = [
     'UC1opHUrw8rvnsadT-iGp7Cg',
     '375504219',
     'minatoaqua',
-    '湊あくあ あくあクルー'
+    '湊あくあ あくあクルー',
+    'aqua_a.webp',
+    'aqua_b.webp',
   ],
   [
     '癒月ちょこ',
@@ -131,7 +151,9 @@ const data = [
     'UC1suqwovbL1kzsoaZgFZLKg',
     '389858754',
     'yuzukichococh',
-    '癒月ちょこ ちょこカルテ'
+    '癒月ちょこ ちょこカルテ',
+    'choco_a.webp',
+    'choco_b.webp',
   ],
   [
     '百鬼あやめ',
@@ -143,7 +165,9 @@ const data = [
     'UC7fk0CB07ly8oSl0aqKkqFg',
     '389858027',
     'nakiriayame',
-    '百鬼あやめ あやめ夜行'
+    '百鬼あやめ あやめ夜行',
+    'ayame_a.webp',
+    'ayame_b.webp',
   ],
   [
     '紫咲シオン',
@@ -155,7 +179,9 @@ const data = [
     'UCXTpFs_3PqI41qX2d9tL2Rw',
     '389857640',
     'murasakishionch',
-    '紫咲シオン 塩っ子'
+    '紫咲シオン 塩っ子',
+    'shion_a.webp',
+    'shion_b.webp',
   ],
   [
     '大空スバル',
@@ -167,7 +193,9 @@ const data = [
     'UCvzGlP9oQwU--Y0r9id_jnA',
     '389859190',
     'oozorasubaru',
-    '大空スバル スバ友'
+    '大空スバル スバ友',
+    'subaru_a.webp',
+    'subaru_b.webp',
   ],
   [
     '大神ミオ',
@@ -179,7 +207,9 @@ const data = [
     'UCp-5t9SrOQwXMU7iIjQfARg',
     '389862071',
     'ookamimio',
-    '大神ミオ ミオファ'
+    '大神ミオ ミオファ',
+    'mio_a.webp',
+    'mio_b.webp',
   ],
   [
     '猫又おかゆ',
@@ -191,7 +221,9 @@ const data = [
     'UCvaTdHTWBGv3MKj3KVqJVCw',
     '412135222/#',
     'nekomataokayu',
-    '猫又おかゆ おにぎりゃー'
+    '猫又おかゆ おにぎりゃー',
+    'okayu_a.webp',
+    'okayu_b.webp',
   ],
   [
     '戌神ころね',
@@ -203,7 +235,9 @@ const data = [
     'UChAnqc_AY5_I3Px5dig3X1Q',
     '412135619/#',
     'inugamikorone',
-    '戌神ころね'
+    '戌神ころね',
+    'korone_a.webp',
+    'korone_b.webp',
   ],
   [
     '不知火フレア',
@@ -215,7 +249,9 @@ const data = [
     'UCvInZx9h3jC2JzsIzoOebWg',
     '454737600',
     'shiranuiflare',
-    '不知火フレア'
+    '不知火フレア',
+    'flare_a.webp',
+    'flare_b.webp',
   ],
   [
     '白銀ノエル',
@@ -228,7 +264,9 @@ const data = [
     'UCdyqAaZDKHXg4Ahi7VENThQ',
     '454733056',
     'shiroganenoel',
-    '白銀ノエル 白銀聖騎士団'
+    '白銀ノエル 白銀聖騎士団',
+    'noel_a.webp',
+    'noel_b.webp',
   ],
   [
     '宝鐘マリン',
@@ -240,7 +278,9 @@ const data = [
     'UCCzUftO8KOVkV4wQG1vkUvg',
     '454955503',
     'houshoumarine',
-    '宝鐘マリン 宝鐘の一味'
+    '宝鐘マリン 宝鐘の一味',
+    'marine_a.webp',
+    'marine_b.webp',
   ],
   [
     '兎田ぺこら',
@@ -252,7 +292,9 @@ const data = [
     'UC1DCedRgGHBdm81E1llLhOQ',
     '443305053',
     'usadapekora',
-    '兎田ぺこら 野うさぎ同盟'
+    '兎田ぺこら 野うさぎ同盟',
+    'pekora_a.webp',
+    'pekora_b.webp',
   ],
   [
     '潤羽るしあ',
@@ -264,7 +306,9 @@ const data = [
     'UCl_gCybOJRIgOXw6Qb4qJzQ',
     '443300418',
     'uruharushia',
-    '潤羽るしあ ふぁんでっど'
+    '潤羽るしあ ふぁんでっど',
+    'rusia_a.webp',
+    'rusia_b.webp',
   ],
   [
     '天音かなた',
@@ -276,7 +320,9 @@ const data = [
     'UCZlDXzGoo7d44bwdNObFacg',
     '',
     'amanekanatach',
-    '天音かなた'
+    '天音かなた',
+    'kanata_a.webp',
+    'kanata_b.webp',
   ],
   [
     '桐生ココ',
@@ -288,7 +334,9 @@ const data = [
     'UCS9uQI-jC3DE0L4IpXyvr6w',
     '',
     'kiryucoco',
-    '桐生ココ'
+    '桐生ココ',
+    'coco_a.webp',
+    'coco_b.webp',
   ],
   [
     '角巻わため',
@@ -300,7 +348,9 @@ const data = [
     'UCqm3BQLlJfvkTsX_hvm0UmA',
     '',
     'tsunomakiwatame',
-    '角巻わため'
+    '角巻わため',
+    'watame_a.webp',
+    'watame_b.webp',
   ],
   [
     '常闇トワ',
@@ -312,7 +362,9 @@ const data = [
     'UC1uv2Oq6kNxgATlCiez59hw',
     '',
     'tokoyamitowa',
-    '常闇トワ'
+    '常闇トワ',
+    'towa_a.webp',
+    'towa_b.webp',
   ],
   [
     '姫森ルーナ',
@@ -324,7 +376,9 @@ const data = [
     'UCa9Y57gfeY0Zro_noHRVrnw',
     '',
     'himemoriluna',
-    '姫森ルーナ'
+    '姫森ルーナ',
+    'luna_a.webp',
+    'luna_b.webp',
   ],
   [
     '雪花ラミィ',
@@ -336,7 +390,9 @@ const data = [
     'UCFKOVgVbGmX65RxO3EtH3iw',
     '',
     'yukihanalamy',
-    '雪花ラミィ'
+    '雪花ラミィ',
+    'lamy_a.webp',
+    'luna_b.webp',
   ],
   [
     '桃鈴ねね',
@@ -348,7 +404,9 @@ const data = [
     'UCAWSyEs_Io8MtpY3m-zqILA',
     '',
     'momosuzunene',
-    '桃鈴ねね ねっ子'
+    '桃鈴ねね ねっ子',
+    'nene_a.webp',
+    'nene_b.webp',
   ],
   [
     '獅白ぼたん',
@@ -360,7 +418,9 @@ const data = [
     'UCUKD-uaobj9jiqB-VXt71mA',
     '',
     'shishirobotan',
-    '獅白ぼたん'
+    '獅白ぼたん',
+    'botan_a.webp',
+    'botan_b.webp',
   ],
   [
     '尾丸ポルカ',
@@ -372,7 +432,9 @@ const data = [
     'UCK9V2B22uJYu3N7eR_BT9QA',
     '',
     'omarupolka',
-    '尾丸ポルカ おまる座'
+    '尾丸ポルカ おまる座',
+    'poruka_a.webp',
+    'poruka_b.webp',
   ],
   [
     'アイラニ・イオフィフティーン',
@@ -384,7 +446,9 @@ const data = [
     'UCAoy6rzhSf4ydcYjJw3WoVg',
     '',
     'airaniiofifteen',
-    'アイラニ・イオフィフティーン'
+    'アイラニ・イオフィフティーン',
+    'iofifteen_a.webp',
+    'iofifteen_b.webp',
   ],
   [
     'ムーナ・ホシノヴァ',
@@ -396,7 +460,9 @@ const data = [
     'UCP0BspO_AMEe3aQqqpo89Dg',
     '',
     'moonahoshinova',
-    'ムーナ・ホシノヴァ'
+    'ムーナ・ホシノヴァ',
+    'moona_a.webp',
+    'moona_b.webp',
   ],
   [
     'アユンダ・リス',
@@ -408,7 +474,9 @@ const data = [
     'UCOyYb1c43VlX9rc_lT6NKQw',
     '',
     'ayunda_risu',
-    'アユンダ・リス'
+    'アユンダ・リス',
+    'risu_a.webp',
+    'risu_b.webp',
   ],
   [
     'クレイジー・オリー',
@@ -420,7 +488,9 @@ const data = [
     'UCYz_5n-uDuChHtLo7My1HnQ',
     '',
     'kureijiollie',
-    'クレイジー・オリー'
+    'クレイジー・オリー',
+    'ollie_a.webp',
+    'ollie_b.webp',
   ],
   [
     'アーニャ・メルフィッサ',
@@ -432,7 +502,9 @@ const data = [
     'UC727SQYUvx5pDDGQpTICNWg?',
     '',
     'anyamelfissa',
-    'アーニャ・メルフィッサ'
+    'アーニャ・メルフィッサ',
+    'anya_a.webp',
+    'anya_b.webp',
   ],
   [
     'パヴォリア・レイネ',
@@ -444,7 +516,9 @@ const data = [
     'UChgTyjG-pdNvxxhdsXfHQ5Q?',
     '',
     'pavoliareine',
-    'パヴォリア・レイネ'
+    'パヴォリア・レイネ',
+    'pavolia_a.webp',
+    'pavolia_b.webp',
   ],
   [
     '森美声',
@@ -456,7 +530,9 @@ const data = [
     'UCL_qhgtOy0dy1Agp8vkySQg',
     '',
     'moricalliope',
-    '森美声'
+    '森美声',
+    'calliope_a.webp',
+    'calliope_b.webp',
   ],
   [
     '小鳥遊キアラ',
@@ -468,7 +544,9 @@ const data = [
     'UCHsx4Hqa-1ORjQTh9TYDhww',
     '',
     'takanashikiara',
-    '小鳥遊キアラ'
+    '小鳥遊キアラ',
+    'kiara_a.webp',
+    'kiara_b.webp',
   ],
   [
     '一伊那尓栖',
@@ -480,7 +558,9 @@ const data = [
     'UCMwGHR0BTZuLsmjY_NT5Pwg',
     '',
     'ninomaeinanis',
-    '一伊那尓栖'
+    '一伊那尓栖',
+    'inanis_a.webp',
+    'inanis_b.webp',
   ],
   [
     'がうる・ぐら',
@@ -492,7 +572,9 @@ const data = [
     'UCoSrY_IQQVpmIRZ9Xf-y93g',
     '',
     'gawrgura',
-    'がうる・ぐら'
+    'がうる・ぐら',
+    'gura_a.webp',
+    'gura_b.webp',
   ],
   [
     'ワトソン・アメリア',
@@ -504,7 +586,9 @@ const data = [
     'UCyl1z3jo3XHR1riLFKG5UAg',
     '',
     'watsonameliaEN',
-    'ワトソン・アメリア'
+    'ワトソン・アメリア',
+    'amelia_a.webp',
+    'amelia_b.webp',
   ],
   [
     '友人A（えーちゃん）',
@@ -516,16 +600,18 @@ const data = [
     '',
     '',
     'achan_UGA',
-    '友人A'
+    '友人A',
+    'achan_a.jpg',
+    'achan_a.webp',
   ]
 ]
 
-export const members: Member[] = data.map(([name, chineseName, englishName, gen, catchphrase, description, youtubeId, bilibiliId, twitterId, twitterHasTags], id) => {
+export const members: Member[] = data.map(([name, chineseName, englishName, gen, catchphrase, description, youtubeId, bilibiliId, twitterId, twitterHasTags, imageAPath, imageBPath], id) => {
   const newGen = name === "白上フブキ" ? ["1st", "gs"] : [gen]
   const newTwitterHasTags = twitterHasTags?.split(" ") ?? []
   return {
     id: id + 1,
-    name, chineseName, englishName, gen: newGen as Generation[], catchphrase, description, youtubeId, bilibiliId, twitterId, twitterHasTags: newTwitterHasTags
+    name, chineseName, englishName, gen: newGen as Generation[], catchphrase, description, youtubeId, bilibiliId, twitterId, twitterHasTags: newTwitterHasTags, imageAPath, imageBPath
   }
 })
 

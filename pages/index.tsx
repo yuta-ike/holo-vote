@@ -178,7 +178,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
   const words: Omit<SerializedWord, "comments">[] = snapshots.docs.map<any>(snapshot => ({ ...snapshot.data(), id: snapshot.id })).map<Omit<SerializedWord, "comments">>((data) => ({
     id: data.id,
     content: data.content,
-    members: data.memberIds.map(id => members[id]),
+    members: data.memberIds.map(id => members[id - 1]),
     videos: data.videos,
     createdAt: (data.createdAt.toDate() as Date).toISOString()
   }))

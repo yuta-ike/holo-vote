@@ -33,10 +33,10 @@ const WordListItem: React.FC<Props> = ({ word }) => {
           role="button"
         >
           <div className="flex flex-row justify-start sm:justify-between items-center w-full py-2">
-            <div className="w-10 flex flex-row mr-3">
+            <div className="flex flex-row flex-wrap mr-2 w-24 justify-center">
               {
                 word.members.map(member => (
-                  <Image onClick={handleOpenMemberDialog(member)} className="rounded-full" src="/monster01.png" width={50} height={50} />
+                  <Image key={member.id} onClick={handleOpenMemberDialog(member)} className="rounded-md bg-white" src={`/${member.imageAPath}`} width={70} height={70} />
                 ))
               }
               {/* <Image onClick={handleOpenMemberDialog(member)} className="rounded-full" src="/monster01.png" width={50} height={50} /> */}

@@ -30,17 +30,17 @@ const WordCard: React.FC<Props> = ({ word }) => {
         <section
           tabIndex={0}
           role="button"
-          className="flex flex-col flex-shrink-0 items-start w-72 sm:w-80 p-4 m-2 bg-gradient-to-r from-primary to-primary-light text-white rounded-md
+          className="flex flex-col flex-shrink-0 items-start justify-between w-72 sm:w-80 pt-1 pl-1 pr-4 pb-4 m-2 bg-gradient-to-r from-primary to-primary-light text-white rounded-md
             cursor-pointer shadow-lg
-            transform duration-200 transition-all focus-visible:outline-black focus:outline-none hover:shadow-none hover:scale-105 active:scale-95">
-          <div className="flex flex-row">
+            transform duration-200 transition-all focus-visible:outline-black focus:outline-none active:scale-95">
+          <div className="flex flex-row overflow-x-scroll w-full flex-nowrap whitespace-nowrap">
             {
               word.members.map(member => (
-                <Image onClick={handleOpenMemberDialog(member)} className="rounded-full" src="/monster01.png" width={50} height={50} />
+                <Image key={member.id} onClick={handleOpenMemberDialog(member)} className="flex-shrink-0 rounded-full bg-white p-1 bg-clip-content" src={`/${member.imageAPath}`} width={70} height={70} />
               ))
             }
           </div>
-          <blockquote className="w-full self-center text-center mt-6 mb-8 text-md sm:text-lg italic break-words">
+          <blockquote className="w-full self-center text-center mt-6 mb-8 text-lg sm:text-lg italic break-words font-bold">
             {word.content}
           </blockquote>
           <button

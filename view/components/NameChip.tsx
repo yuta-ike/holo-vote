@@ -21,7 +21,7 @@ const NameChip: React.FC<Props> = ({ member, onClick, selected, selectable = tru
         selectable && "transition-all transform hover:shadow-md active:scale-95 active:shadow-none cursor-pointer select-none",
         `relative name-chip flex-shrink-0 flex flex-row items-center rounded-full border-4 m-1 text-white focus-visible:outline-black focus:outline-none`, className)}
     >
-      <Image className="rounded-full bg-white w-8" src="/001.png" width={40} height={40} />
+      <Image className="rounded-full bg-white w-8" src={`/${member.imageAPath}`} width={40} height={40} />
       <div className="flex-1 mx-2 text-sm">
         {member.name}
       </div>
