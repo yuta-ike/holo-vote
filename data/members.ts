@@ -40,7 +40,7 @@ const data = [
     '366690056',
     'sakuramiko35',
     'さくらみこ',
-    'miko_a.webp',
+    'miko_a.png',
     'miko_b.webp',
   ],
   [
