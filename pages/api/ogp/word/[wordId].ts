@@ -50,7 +50,7 @@ const createOgp = async (req: NextApiRequest, res: NextApiResponse): Promise<voi
   }
 
   {
-    const text = word.members.map(member => member.name).join(" ")
+    const text = word.members.length > 6 ? word.members.slice(0, 6).map(member => member.name).join(" ") + ` 他${word.members.length - 5}人` : word.members.map(member => member.name).join(" ")
     const fontSize = 42
     ctx.font = `${fontSize}px "puikko"`
     ctx.fillStyle = PRIMARY_COLOR
