@@ -1,6 +1,6 @@
-export type Generation = "1st" | "2nd" | "gs" | "3rd" | "4th" | "5th" | "en-1st" | "id-1st" | "id-2nd" | "staff"
-export const generations = ["1st", "2nd", "gs", "3rd", "4th", "5th", "en-1st", "id-1st", "id-2nd", "staff"]
-export const genToDisplay = (gen: Generation) => ({ "1st": "1期生", "gs": "ゲーマーズ", "2nd": "2期生", "3rd": "3期生", "4th": "4期生", "5th": "5期生", "en-1st": "EN1期生", "id-1st": "ID1期生", "id-2nd": "ID2期生", "staff": "スタッフ"}[gen])
+export type Generation = "0th" | "1st" | "2nd" | "gs" | "3rd" | "4th" | "5th" | "en-1st" | "id-1st" | "id-2nd" | "staff"
+export const generations = ["0th", "1st", "2nd", "gs", "3rd", "4th", "5th", "en-1st", "id-1st", "id-2nd", "staff"]
+export const genToDisplay = (gen: Generation) => ({ "0th": "0期生", "1st": "1期生", "gs": "ゲーマーズ", "2nd": "2期生", "3rd": "3期生", "4th": "4期生", "5th": "5期生", "en-1st": "EN1期生", "id-1st": "ID1期生", "id-2nd": "ID2期生", "staff": "スタッフ"}[gen])
 export type Country = "jp" | "id" | "en"
 export const countries = ["jp", "id", "en"]
 
