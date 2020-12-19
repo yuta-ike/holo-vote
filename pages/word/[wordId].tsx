@@ -162,7 +162,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
               <div className="my-4">
                 \ 投票して盛り上げよう!! /
               </div>
-              <blockquote className="quote-design block relative my-3 px-12 py-2 self-center text-xl break-all font-bold transition-all hover:tracking-widest">
+              <blockquote className="quote-design block relative my-3 px-12 py-2 self-center text-2xl break-all font-bold transition-all hover:tracking-widest">
                 {word.content}
               </blockquote>
               <a

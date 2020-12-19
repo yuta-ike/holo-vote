@@ -20,7 +20,7 @@ const MessageDialog: React.FC<Props> = ({open, onClose}) => {
       onClose={handleClose}
     >
       <div className="p-8">
-        <h1 className="mb-8">ノミネートが完了しました！</h1>
+        <h1 className="mb-8 text-center">ノミネートが完了しました！</h1>
         <div className="text-8xl w-80">
           <GiPartyPopper className="mx-auto"/>
         </div>
