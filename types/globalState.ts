@@ -7,6 +7,7 @@ type GlobalState = {
   nominateEnd: boolean
   voteStart: boolean
   voteStartDate: string
+  description: string
   topMessage: Record<string, string>
   footerMessage: Record<string, string>
 }

@@ -41,7 +41,7 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
   const [mode, setMode] = useState<"late" | "random">("late")
   const [sort, setSort] = useState(true)
 
-  const { globalStates: { initialized, nominateEnd, topMessage } } = useGlobalStates()
+  const { globalStates: { initialized, description, nominateEnd, topMessage } } = useGlobalStates()
 
   const handleMemberSelectDone = (memberIds: number[]) => {
     setFilters(memberIds.length === members.length ? null : memberIds.map(id => members[id - 1]))
@@ -105,9 +105,7 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
             </dl>
 
             <section className="mx-2 my-4 sm:my-8 p-4 border-solid border-primary border-2 w-full text-sm">
-              ホロライブ流行語大賞2020（非公式）は、「ノミネート期間」と「投票期間」に分かれています。
-              「ノミネート期間」では、ホロライブファンのみなさんから、ホロライブ流行語のノミネート（登録）を募集します。
-              ノミネートされた言葉の中から投票を行い、流行語を決定します。投票は「投票期間」中にのみ可能です。
+              {description}
             </section>
             <section className="my-16">
               <p className="text-center">あなたの思う「流行語」はなに？</p>

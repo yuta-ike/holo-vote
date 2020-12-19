@@ -8,8 +8,10 @@ import initFirebase from "../utils/auth/initFirebase"
 import GlobalStatesProvider from "../utils/context/UserProvider"
 import isSameDay from "../utils/date/isSameDay"
 
+const defaultDescription = `ホロライブ流行語大賞2020（非公式）は、「ノミネート期間」と「投票期間」に分かれています。「ノミネート期間」では、ホロライブファンのみなさんから、ホロライブ流行語のノミネート（登録）を募集します。ノミネートされた言葉の中から投票を行い、流行語を決定します。投票は「投票期間」中にのみ可能です。`
+
 const App: React.FC<AppProps> = ({ Component, pageProps }) => {
-  const [globalStates, setGlobalStates] = useState<GlobalState>({ user: null, todayVotes: 0, nominateEnd: false, voteStart: false, initialized: false, topMessage: {}, footerMessage: {}, voteStartDate: "" })
+  const [globalStates, setGlobalStates] = useState<GlobalState>({ user: null, todayVotes: 0, nominateEnd: false, voteStart: false, initialized: false, description: defaultDescription, topMessage: {}, footerMessage: {}, voteStartDate: "" })
   useEffect(() => {
     const { auth, db, remoteConfig } = initFirebase()
 
@@ -28,6 +30,7 @@ const App: React.FC<AppProps> = ({ Component, pageProps }) => {
           nominateEnd: remoteConfig().getBoolean("nominateEnd"),
           voteStart: remoteConfig().getBoolean("voteStart"),
           voteStartDate: remoteConfig().getString("VOTE_START_DATE"),
+          description: remoteConfig().getString("description"),
           topMessage,
           footerMessage,
         }))
