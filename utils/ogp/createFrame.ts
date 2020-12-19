@@ -49,9 +49,9 @@ const createFrame = (ctx: CanvasRenderingContext2D, { title = true } = {}) => {
     ctx.textAlign = "center"
     const lineHeight = 32 * 1.2
     const textWidth = ctx.measureText(text).width
-    ctx.fillRect(WIDTH / 2 - textWidth / 2 - 50, HEIGHT - lineHeight - 22, textWidth + 100, lineHeight + 20)
+    ctx.fillRect(WIDTH / 2 - textWidth / 2 - 50, HEIGHT - lineHeight - 52, textWidth + 100, lineHeight + 70)
     ctx.fillStyle = "white"
-    ctx.fillText(text, WIDTH / 2, HEIGHT - 12, WIDTH * 0.9)
+    ctx.fillText(text, WIDTH / 2, HEIGHT - 32, WIDTH * 0.9)
   }
 }
 

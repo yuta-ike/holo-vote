@@ -19,16 +19,26 @@ const createOgp = async (req: NextApiRequest, res: NextApiResponse): Promise<voi
   registerFont(path.resolve("./assets/fonts/M_PLUS_Rounded_1c/MPLUSRounded1c-Medium.ttf"), { family: "MPLUS" })
 
   createFrame(ctx, { title: false })
-
-  const text = "【非公式】 ホロライブ流行語大賞2020!! 【非公式】"
-  const fontSize = 60
-  ctx.font = `${fontSize}px "puikko"`
-  ctx.textAlign = "center"
-  ctx.fillStyle = PRIMARY_COLOR
-  ctx.fillText(text, WIDTH / 2, HEIGHT / 2 - 20, WIDTH * 0.9)
+  {
+    const text = "【非公式】"
+    const fontSize = 50
+    ctx.font = `${fontSize}px "puikko"`
+    ctx.textAlign = "center"
+    ctx.fillStyle = PRIMARY_COLOR
+    ctx.fillText(text, WIDTH / 2, HEIGHT / 2 - 120, WIDTH * 0.9)
+  }
 
   {
-    const text = "ホロライブファンで流行語大賞を決めよう!!"
+    const text = "ホロライブ流行語大賞2020!!"
+    const fontSize = 80
+    ctx.font = `${fontSize}px "puikko"`
+    ctx.textAlign = "center"
+    ctx.fillStyle = PRIMARY_COLOR
+    ctx.fillText(text, WIDTH / 2, HEIGHT / 2 - 20, WIDTH * 0.9)
+  }
+
+  {
+    const text = "〜 ホロライブファンで流行語大賞を決めよう!! 〜"
     const fontSize = 40
     ctx.font = `${fontSize}px "puikko"`
     ctx.fillStyle = "black"
