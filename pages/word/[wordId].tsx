@@ -166,7 +166,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
                 {word.content}
               </blockquote>
               <a
-                href={`https://twitter.com/intent/tweet?url=https://${process.env.NEXT_PUBLIC_VERCEL_URL}${router.asPath.split("#")[0]}&hashtags=${encodeURIComponent(`ホロ流行語大賞_非公式,ホロライブ`)}`}
+                href={`https://twitter.com/intent/tweet?url=https://${process.env.NEXT_PUBLIC_VERCEL_URL}${router.asPath.split("#")[0]}&hashtags=${encodeURIComponent(`ホロ流行語大賞_非公式,${word.members.map(member => member.name).join(",")}`)}`}
                 className="px-4 py-2 my-4 rounded-full border-twitter text-sm flex items-center
                     transform transition-all bg-twitter text-white hover:shadow-md
                     focus:outline-none focus-visible:outline-black active:shadow-none active:scale-95">
