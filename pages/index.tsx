@@ -22,11 +22,12 @@ import Footer from '../view/components/Footer'
 
 type Props = {
   words: Omit<SerializedWord, "comments">[]
+  nominateNum: number
 }
 
 const PICKUP_NUM = 7
 
-const Index: React.FC<Props> = ({ words: _words }) => {
+const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
   const router = useRouter()
   const [words] = useState<Omit<Word, "comments">[]>(() => _words.map(unserialize))
   const [pickup, setPickUp] = useState<Omit<Word, "comments">[]>([])
@@ -96,27 +97,11 @@ const Index: React.FC<Props> = ({ words: _words }) => {
                   <div key={key} className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-center text-center">
                     <dt className="inline-block text-sm">{key}</dt>
                     <dd className="inline-block text-xl sm:text-2xl sm:ml-2 font-bold text-primary">
-                      {
-                        message === "%NOMINATE_SUM%" ? (
-                          words.length.toString()
-                        ) : message
-                      }
+                      {message === "%NOMINATE_SUM%" ? nominateNum : message}
                     </dd>
                   </div>
                 ))
               }
-              {/* <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-center text-center">
-                <dt className="inline-block text-sm">ノミネート数</dt>
-                <dd className="inline-block text-xl sm:text-2xl sm:ml-2 font-bold text-primary">{words.length.toString()}</dd>
-              </div>
-              <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-center text-center">
-                <dt className="inline-block text-sm">ノミネート〆切</dt>
-                <dd className="inline-block text-xl sm:text-2xl sm:ml-2 font-bold text-primary">未定</dd>
-              </div>
-              <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-center text-center">
-                <dt className="inline-block text-sm">投票開始</dt>
-                <dd className="inline-block text-xl sm:text-2xl sm:ml-2 font-bold text-primary">未定</dd>
-              </div> */}
             </dl>
 
             <section className="mx-2 my-4 sm:my-8 p-4 border-solid border-primary border-2 w-full text-sm">
@@ -216,14 +201,15 @@ const Index: React.FC<Props> = ({ words: _words }) => {
 export const getServerSideProps: GetServerSideProps<Props> = async () => {
   const { db } = initAdminFirebase()
   const snapshots = await db().collection("words").orderBy("createdAt").get()
-  const words: Omit<SerializedWord, "comments">[] = snapshots.docs.map<any>(snapshot => ({ ...snapshot.data(), id: snapshot.id })).map<Omit<SerializedWord, "comments">>((data) => ({
+  const originalWords = snapshots.docs.map<any>(snapshot => ({ ...snapshot.data(), id: snapshot.id }))
+  const words: Omit<SerializedWord, "comments">[] = originalWords.filter(data => data.redirectId == null).map<Omit<SerializedWord, "comments">>((data) => ({
     id: data.id,
     content: data.content,
     members: data.memberIds.map(id => members[id - 1]),
     videos: data.videos,
     createdAt: (data.createdAt.toDate() as Date).toISOString()
   }))
-  return { props: { words } }
+  return { props: { words, nominateNum: originalWords.length } }
 }
 
 export default Index

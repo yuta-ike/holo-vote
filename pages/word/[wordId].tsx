@@ -27,6 +27,7 @@ import VideoAddDialog from '../../view/dialog/VideoAddDialog'
 import useIsSp from '../../utils/hooks/useIsSp'
 import toFormatApproximateTime from '../../utils/date/toFormatApproximateTime'
 import Footer from '../../view/components/Footer'
+import { firestore } from 'firebase-admin'
 
 type SerializedWord = Omit<Word, "comments"> & { comments: SerializedComment[] }
 
@@ -276,7 +277,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
                 }
                 {
                   word.comments.length === 0 && (
-                    <section className="text-center text-gray-400">
+                    <section className="text-center text-gray-400 my-16 sm:my-24">
                       コメントはまだ投稿されていません<br/>コメントを投稿して盛り上げよう!!
                     </section>
                   )
@@ -299,8 +300,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
   )
 }
 
-const getWordData = async (wordId: string) => {
-  const { db } = initAdminFirebase()
+const getWordData = async (wordId: string, db: typeof firestore) => {
   const [wordSnapshot, commentSnapshots] = await Promise.all([
     db().collection("words").doc(wordId).get(),
     db().collection("words").doc(wordId).collection("comments").orderBy('createdAt').get(),
@@ -311,10 +311,10 @@ const getWordData = async (wordId: string) => {
 
   if (wordData == null) throw Error()
 
-  // if(wordData.redirectId != null){
-  //   console.log(wordData.redirectId)
-  //   return getWordData(wordData.redirectId)
-  // }
+  if(wordData.redirectId != null){
+    console.log(wordData.redirectId)
+    return getWordData(wordData.redirectId, db)
+  }
 
   const word: Omit<SerializedWord, "createdAt"> = {
     id: wordSnapshot.id,
@@ -334,7 +334,8 @@ const getWordData = async (wordId: string) => {
 
 export const getServerSideProps: GetServerSideProps<Props, Params> = async ({ res, params: { wordId } }) => {
   try{
-    const word = await getWordData(wordId)
+    const { db } = initAdminFirebase()
+    const word = await getWordData(wordId, db)
     return { props: { word } }
   }catch(e){
     console.log(e)
