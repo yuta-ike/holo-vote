@@ -28,6 +28,7 @@ import useIsSp from '../../utils/hooks/useIsSp'
 import toFormatApproximateTime from '../../utils/date/toFormatApproximateTime'
 import Footer from '../../view/components/Footer'
 import { firestore } from 'firebase-admin'
+import outLink from '../../utils/ga/outLink'
 
 type SerializedWord = Omit<Word, "comments"> & { comments: SerializedComment[] }
 
@@ -57,7 +58,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
   const uid = useRef<string>()
   useEffect(() => {
     const { auth } = initFirebase()
-    auth().onAuthStateChanged((user) => {
+    auth.onAuthStateChanged((user) => {
       if(user == null) return
       uid.current = user.uid
       setLikedIds(_word.comments.filter(comment => comment.like.includes(uid.current)).map(comment => comment.id))
@@ -65,14 +66,14 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
   }, [])
 
   const handleCommentSend = async () => {
-    const { db, auth } = initFirebase()
+    const { firebase, db, auth } = initFirebase()
     setIsLoading(true)
-    const ref = await db().collection("words").doc(word.id).collection("comments").add({
+    const ref = await db.collection("words").doc(word.id).collection("comments").add({
       content: comment,
-      authorId: auth().currentUser.uid,
+      authorId: auth.currentUser.uid,
       like: [],
-      createdAt: db.FieldValue.serverTimestamp(),
-      updatedAt: db.FieldValue.serverTimestamp(),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
     setComment("")
     setIsLoading(false)
@@ -89,25 +90,25 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
   }
 
   const handleLikeAdd = async (commentId: string) => {
-    const { db, auth } = initFirebase()
+    const { firebase, db, auth } = initFirebase()
     setLikedIds([...likedIds, commentId])
-    await db().collection("words").doc(word.id).collection("comments").doc(commentId).update({
-      like: db.FieldValue.arrayUnion(auth().currentUser.uid),
+    await db.collection("words").doc(word.id).collection("comments").doc(commentId).update({
+      like: firebase.firestore.FieldValue.arrayUnion(auth.currentUser.uid),
     })
   }
 
   const handleLikeRemove = async (commentId: string) => {
-    const { db, auth } = initFirebase()
+    const { firebase, db, auth } = initFirebase()
     setLikedIds(likedIds.filter(id => commentId !== id))
-    await db().collection("words").doc(word.id).collection("comments").doc(commentId).update({
-      like: db.FieldValue.arrayRemove(auth().currentUser.uid),
+    await db.collection("words").doc(word.id).collection("comments").doc(commentId).update({
+      like: firebase.firestore.FieldValue.arrayRemove(auth.currentUser.uid),
     })
   }
 
   const handleAddMember = async (selectedIds: number[]) => {
     const { db } = initFirebase()
     const newMemberIds = Array.from(new Set([...word.members.map(member => member.id), ...selectedIds]))
-    await db().collection("words").doc(word.id).update({
+    await db.collection("words").doc(word.id).update({
       memberIds: newMemberIds,
     })
     setWord({ ...word, members: newMemberIds.map(id => members[id - 1]) })
@@ -135,19 +136,16 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
     <>
       <Head>
         <title>ホロライブ流行語大賞【非公式】</title>
-        <meta property="og:title" content="【非公式】ホロライブ流行語大賞2020!!"/>
+        <meta property="og:title" content={`【非公式】ホロライブ流行語大賞2020!! ${word.content}`}/>
         <meta property="og:description" content={`${word.content} ー ${word.members.map(member => member.name).join(" ")}`} />
-        <meta property="og:type" content="website" />
         <meta property="og:url" content={router.asPath} />
         <meta property="og:image" content={`/api/ogp/word/${word.id}`} />
-        <meta property="og:site_name" content="【非公式】ホロライブ流行語大賞2020!!" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@holovote" />
         <meta name="twitter:url" content={router.asPath} />
         <meta name="twitter:title" content={`${word.content} ー ${word.members.map(member => member.name).join(" ")}`} />
         <meta name="twitter:description" content={`${word.content} ー ${word.members.map(member => member.name).join(" ")}    【非公式】ホロライブ流行語大賞2020!!`} />
         <meta name="twitter:image" content={`https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/ogp/word/${word.id}`} />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="bg-gray-100 sm:bg-gray-50">
         <Header onClickNominate={() => setNominateDialogOpen(true)} onClickVote={() => setVoteDialogOpen(true)}/>
@@ -169,7 +167,9 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
                 href={`https://twitter.com/intent/tweet?url=https://${process.env.NEXT_PUBLIC_VERCEL_URL}${router.asPath.split("#")[0]}&hashtags=${encodeURIComponent(`ホロ流行語大賞_非公式,${word.members.map(member => member.name).join(",")}`)}`}
                 className="px-4 py-2 my-4 rounded-full border-twitter text-sm flex items-center
                     transform transition-all bg-twitter text-white hover:shadow-md
-                    focus:outline-none focus-visible:outline-black active:shadow-none active:scale-95">
+                    focus:outline-none focus-visible:outline-black active:shadow-none active:scale-95"
+                onClick={outLink("word-twitter-link")}
+              >
                 <AiOutlineTwitter className="mr-2"/> ツイートする
               </a>
               <button

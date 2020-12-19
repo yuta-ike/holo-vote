@@ -1,5 +1,6 @@
 import { DateTime } from "luxon"
 import type { AppProps } from "next/app"
+import { useRouter } from "next/router"
 import {  useEffect, useState } from "react"
 import "tailwindcss/tailwind.css"
 import "../style/global.css"
@@ -16,40 +17,59 @@ const App: React.FC<AppProps> = ({ Component, pageProps }) => {
     const { auth, db, remoteConfig } = initFirebase()
 
     if (window != null) {
-      remoteConfig().fetchAndActivate().then(() => {
+      remoteConfig.fetchAndActivate().then(() => {
         let topMessage: Record<string, string> = {}
         let footerMessage: Record<string, string> = {}
         try{
-          footerMessage = JSON.parse(remoteConfig().getString("footerMessage")) as Record<string, string>
-          topMessage = JSON.parse(remoteConfig().getString("topMessage")) as Record<string, string>
+          footerMessage = JSON.parse(remoteConfig.getString("footerMessage")) as Record<string, string>
+          topMessage = JSON.parse(remoteConfig.getString("topMessage")) as Record<string, string>
         }catch{}
 
         setGlobalStates(prev => ({
           ...prev,
           initialized: true,
-          nominateEnd: remoteConfig().getBoolean("nominateEnd"),
-          voteStart: remoteConfig().getBoolean("voteStart"),
-          voteStartDate: remoteConfig().getString("VOTE_START_DATE"),
-          description: remoteConfig().getString("description"),
+          nominateEnd: remoteConfig.getBoolean("nominateEnd"),
+          voteStart: remoteConfig.getBoolean("voteStart"),
+          voteStartDate: remoteConfig.getString("VOTE_START_DATE"),
+          description: remoteConfig.getString("description"),
           topMessage,
           footerMessage,
         }))
       })
     }
 
-    auth().onAuthStateChanged(async (user) => {
+    auth.onAuthStateChanged(async (user) => {
       setGlobalStates(prev => ({...prev, user}))
       if(user != null){
-        const snapshots = await db().collectionGroup("votes").where("userId", "==", user.uid).get()
+        const snapshots = await db.collectionGroup("votes").where("userId", "==", user.uid).get()
         const todayVotes = snapshots.docs.map(snapshot => snapshot.data()).map((data) => DateTime.fromJSDate(data.createdAt.toDate())).filter(createdAt => isSameDay(createdAt, DateTime.local()))
         setGlobalStates(prev => ({ ...prev, todayVotes: todayVotes.length }))
       }
     })
-    auth().signInAnonymously()
+    auth.signInAnonymously()
   }, [])
 
   const incrementTodayVotes = () => setGlobalStates(prev => ({...prev, todayVotes: prev.todayVotes + 1}))
   
+  const router = useRouter()
+
+  useEffect(() => {
+    const { analytics } = initFirebase()
+    analytics.logEvent("page_view", { page_location: router.asPath, page_path: router.asPath, page_title: router.asPath })
+
+    // if (!existsGaId) return
+
+    const handleRouteChange = (path: string) => {
+      console.log("LOG")
+      analytics.logEvent("page_view", { page_location: path, page_path: path, page_title: path })
+    }
+
+    router.events.on('routeChangeComplete', handleRouteChange)
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange)
+    }
+  }, [])
+
   return (
     <>
       <link rel="preconnect" href="https://fonts.gstatic.com"/>

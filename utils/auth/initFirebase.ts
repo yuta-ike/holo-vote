@@ -2,17 +2,18 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'firebase/remote-config'
+import 'firebase/analytics'
 
 const config = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_PUBLIC_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
   databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  appId: '1:665505747760:web:9d6a70351cd5c7e2f6eef5',
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 }
 
-let voteStart = false
-let nominateEnd = false
+let db: firebase.firestore.Firestore, auth: firebase.auth.Auth, remoteConfig: firebase.remoteConfig.RemoteConfig, analytics: firebase.analytics.Analytics = null
 
 const initFirebase = () => {
   if (!firebase.apps.length) {
@@ -30,12 +31,12 @@ const initFirebase = () => {
       }
     }
   }
+  if(db == null) db = firebase.firestore()
+  if(auth == null) auth = firebase.auth()
+  if(remoteConfig == null) remoteConfig = firebase.remoteConfig()
+  if(analytics == null) analytics = firebase.analytics()
 
-  const db = firebase.firestore
-  const auth = firebase.auth
-  const remoteConfig = firebase.remoteConfig
-
-  return { db, auth, config: { voteStart, nominateEnd }, remoteConfig,  firebase }
+  return { db, auth, remoteConfig, analytics, firebase }
 }
 
 export default initFirebase

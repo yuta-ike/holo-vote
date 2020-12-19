@@ -22,15 +22,19 @@ const VoteDialog: React.FC<Props> = ({ open, onClose, word }) => {
   const { globalStates: { user, todayVotes, voteStart, voteStartDate }, incrementTodayVotes } = useGlobalStates()
 
   const handleVote = async () => {
-    const { db, auth } = initFirebase()
-    const uid = auth().currentUser?.uid
+    const { firebase, db, auth } = initFirebase()
+    const uid = auth.currentUser?.uid
 
     if (uid == null || todayVotes >= MAX_VOTE_NUM) return
 
-    await db().collection("words").doc(word.id).collection("votes").add({
+    await db.collection("words").doc(word.id).collection("votes").add({
       userId: uid,
-      createdAt: db.FieldValue.serverTimestamp(),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     })
+
+    const { analytics } = initFirebase()
+    analytics.logEvent("vote", { name: "vote" })
+
     incrementTodayVotes()
     setVoteCompleteDialogOpen(true)
   }

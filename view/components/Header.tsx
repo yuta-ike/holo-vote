@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import useIsSp from '../../utils/hooks/useIsSp'
 import throttle from 'lodash.throttle'
 import { useGlobalStates } from '../../utils/context/UserProvider'
+import outLink from '../../utils/ga/outLink'
 
 type Props = {
   onClickNominate: () => void
@@ -71,6 +72,7 @@ const Header: React.FC<Props> = ({ onClickNominate, onClickVote }) => {
               href={`https://twitter.com/intent/tweet?url=https://${process.env.NEXT_PUBLIC_VERCEL_URL}${router.asPath.split("#")[0]}&hashtags=${encodeURIComponent(`ホロ流行語大賞_非公式,ホロライブ`)}`}
               className="flex flex-row items-center bg-white rounded-full p-2 outline-none
                   transform duration-200 transition-all focus-visible:outline-black focus:outline-none focus:shadow-none hover:scale-105 focus:scale-95"
+              onClick={outLink("header-twitter-link")}
             >
               <div className="sm:mr-2 text-twitter text-3xl">
                 <AiOutlineTwitter />
@@ -81,6 +83,7 @@ const Header: React.FC<Props> = ({ onClickNominate, onClickVote }) => {
               href={`https://twitter.com/intent/tweet?url=https://${process.env.NEXT_PUBLIC_VERCEL_URL}${router.asPath.split("#")[0]}&hashtags=${encodeURIComponent(`ホロ流行語大賞_非公式,ホロライブ`)}`}
               className="flex flex-row items-center bg-twitter text-white rounded-sm px-2 py-1 shadow-lg outline-none
                   transform duration-200 transition-all focus-visible:outline-black focus:outline-none focus:shadow-none hover:scale-105 focus:scale-95"
+              onClick={outLink("header-twitter-link")}
             >
               <div className="sm:mr-2 text-white">
                 <AiOutlineTwitter />

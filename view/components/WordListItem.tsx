@@ -7,6 +7,7 @@ import VoteDialog from '../dialog/VoteDialog'
 import Member from '../../types/member'
 import MemberDialog from '../dialog/MemberDialog'
 import classNames from 'classnames'
+import initFirebase from '../../utils/auth/initFirebase'
 
 type Props = {
   word: Omit<Word, "comments">
@@ -20,6 +21,8 @@ const WordListItem: React.FC<Props> = ({ word, className = "" }) => {
   const handleClickVote = (e: MouseEvent<HTMLInputElement>) => {
     e.stopPropagation()
     setVoteDialogOpen(true)
+    const { analytics } = initFirebase()
+    analytics.logEvent("select_item", { item_list_name: word.content, item_list_id: word.id, name: "wordlistitem" })
   }
 
   const handleOpenMemberDialog = (member: Member) => (e: any) => {
