@@ -319,7 +319,7 @@ const getWordData = async (wordId: string, db: typeof firestore) => {
   const word: Omit<SerializedWord, "createdAt"> = {
     id: wordSnapshot.id,
     content: wordData.content,
-    members: wordData.memberIds.map((id: number) => members[id - 1]).reverse(),
+    members: wordData.memberIds.map((id: number) => members[id - 1]),
     videos: wordData.videos,
     comments: commentData.map<SerializedComment>((data, i) => ({
       id: data.id,
