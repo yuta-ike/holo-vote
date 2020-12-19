@@ -27,7 +27,7 @@ const MemberDialog: React.FC<Props> = ({ open, onClose, member }) => {
       <DialogTitle>{member.name}<span className="ml-4 text-sm">
         {
           member.chineseName !== "" ? (
-            `${member.chineseName}/${member.englishName}`
+            `${member.chineseName} / ${member.englishName}`
           ) : (
             member.englishName
           )
