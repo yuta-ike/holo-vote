@@ -145,7 +145,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
         <meta name="twitter:site" content="@holovote" />
         <meta name="twitter:url" content={router.asPath} />
         <meta name="twitter:title" content={`${word.content} ー ${word.members.map(member => member.name).join(" ")}`} />
-        <meta name="twitter:description" content={`【非公式】ホロライブ流行語大賞2020!!    ${word.content} ー ${word.members.map(member => member.name).join(" ")}`} />
+        <meta name="twitter:description" content={`${word.content} ー ${word.members.map(member => member.name).join(" ")}    【非公式】ホロライブ流行語大賞2020!!`} />
         <meta name="twitter:image" content={`https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/ogp/word/${word.id}`} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
