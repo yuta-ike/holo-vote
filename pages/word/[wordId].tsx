@@ -149,7 +149,12 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
       </Head>
       <div className="bg-gray-100 sm:bg-gray-50">
         <Header onClickNominate={() => setNominateDialogOpen(true)} onClickVote={() => setVoteDialogOpen(true)}/>
-        <div className="max-w-screen-xl mx-auto sm:my-8 sm:px-8">
+        <Link href="/">
+          <a className="block ml-8 py-4">
+            一覧へ戻る
+          </a>
+        </Link>
+        <div className="max-w-screen-xl mx-auto sm:mb-8 sm:px-8">
           <div className="relative w-full flex flex-col items-center px-4 py-8 bg-white min-h-screen round-2 sm:shadow-lg">
             <section className="sticky z-40 sm:top-20 sm:-mx-8 top-16 w-screen flex flex-col items-start text-center py-2 bg-gradient-to-r from-primary to-primary-light text-white shadow-lg">
               <blockquote className="w-full self-center my-1 text-md sm:text-2xl italic break-all">
