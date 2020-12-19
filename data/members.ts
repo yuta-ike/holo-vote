@@ -307,8 +307,8 @@ const data = [
     '443300418',
     'uruharushia',
     '潤羽るしあ ふぁんでっど',
-    'rusia_a.webp',
-    'rusia_b.webp',
+    'rushia_a.webp',
+    'rushia_b.webp',
   ],
   [
     '天音かなた',
@@ -433,8 +433,8 @@ const data = [
     '',
     'omarupolka',
     '尾丸ポルカ おまる座',
-    'poruka_a.webp',
-    'poruka_b.webp',
+    'polka_a.webp',
+    'polka_b.webp',
   ],
   [
     'アイラニ・イオフィフティーン',

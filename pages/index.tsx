@@ -16,6 +16,9 @@ import { unserialize } from '../types/word'
 import shuffle from '../utils/shuffle'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
+import { useGlobalStates } from '../utils/context/UserProvider'
+import Link from 'next/link'
+import Footer from '../view/components/Footer'
 
 type Props = {
   words: Omit<SerializedWord, "comments">[]
@@ -37,6 +40,8 @@ const Index: React.FC<Props> = ({ words: _words }) => {
   const [mode, setMode] = useState<"late" | "random">("late")
   const [sort, setSort] = useState(true)
 
+  const { globalStates: { initialized, nominateEnd, topMessage } } = useGlobalStates()
+
   const handleMemberSelectDone = (memberIds: number[]) => {
     setFilters(memberIds.length === members.length ? null : memberIds.map(id => members[id - 1]))
     setMemberSelectDialogOpen(false)
@@ -49,11 +54,9 @@ const Index: React.FC<Props> = ({ words: _words }) => {
   useEffect(() => {
     const filterIds = filter?.map(member => member.id)
     const filtered = filter == null ? words : words.filter(word => word.members.reduce((acc, member) => acc || filterIds.includes(member.id), false))
-    console.log(filtered)
     const sorted = sort
       ? [...filtered.sort((a, b) => a.createdAt < b.createdAt ? 1 : a.createdAt === b.createdAt ? 0 : -1)]
       : [...filtered.sort((a, b) => a.createdAt < b.createdAt ? -1 : a.createdAt === b.createdAt ? 0 : 1)]
-    console.log(sorted)
     setListWords(sorted)
   }, [sort, filter])
 
@@ -81,23 +84,38 @@ const Index: React.FC<Props> = ({ words: _words }) => {
         <meta name="twitter:title" content="【非公式】ホロライブ流行語大賞2020!!" />
         <meta name="twitter:description" content={`ホロライブファンでホロライブ流行語大賞を決めませんか？ぜひご参加ください!!`} />
         <meta name="twitter:image" content={`https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/ogp/top`} />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="bg-gray-50">
+      <div className="bg-gray-100 sm:bg-gray-50">
         <Header onClickNominate={() => setNominateDialogOpen(true)}/>
-        <div className="sm:m-8 px-4 pt-8 pb-48 bg-white min-h-screen round-2 shadow-lg flex flex-col items-center">
+        <div className="max-w-screen-xl sm:m-8 px-4 py-8 bg-white min-h-screen round-2 sm:shadow-lg flex flex-col items-center">
           <dl className="sm:mx-2 p-2 sm:p-4 bg-gray-50 text-black w-full flex flex-row">
-            <div className="flex-1 flex flex-col sm:flex-row text-center">
+            {
+              Object.entries(topMessage).map(([key, message]) => (
+                <div key={key} className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-center text-center">
+                  <dt className="inline-block text-sm">{key}</dt>
+                  <dd className="inline-block text-xl sm:text-2xl sm:ml-2 font-bold text-primary">
+                    {
+                      message === "%NOMINATE_SUM%" ? (
+                        words.length.toString()
+                      ) : message
+                    }
+                  </dd>
+                </div>
+              ))
+            }
+            {/* <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-center text-center">
               <dt className="inline-block text-sm">ノミネート数</dt>
-              <dd className="inline-block text-2xl sm:ml-2 font-bold text-primary">{words.length.toString()}</dd>
+              <dd className="inline-block text-xl sm:text-2xl sm:ml-2 font-bold text-primary">{words.length.toString()}</dd>
             </div>
-            <div className="flex-1 flex flex-col sm:flex-row text-center">
+            <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-center text-center">
               <dt className="inline-block text-sm">ノミネート〆切</dt>
-              <dd className="inline-block text-2xl sm:ml-2 font-bold text-primary">未定</dd>
+              <dd className="inline-block text-xl sm:text-2xl sm:ml-2 font-bold text-primary">未定</dd>
             </div>
-            <div className="flex-1 flex flex-col sm:flex-row text-center">
+            <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-center text-center">
               <dt className="inline-block text-sm">投票開始</dt>
-              <dd className="inline-block text-2xl sm:ml-2 font-bold text-primary">未定</dd>
-            </div>
+              <dd className="inline-block text-xl sm:text-2xl sm:ml-2 font-bold text-primary">未定</dd>
+            </div> */}
           </dl>
 
           <section className="mx-2 my-4 sm:my-8 p-4 border-solid border-primary border-2 w-full text-sm">
@@ -107,16 +125,29 @@ const Index: React.FC<Props> = ({ words: _words }) => {
           </section>
           <section className="my-16">
             <p className="text-center">あなたの思う「流行語」はなに？</p>
-            <button
-              className="px-16 py-4 my-4 bg-gradient-to-r from-primary to-primary-light text-white rounded-full shadow-lg text-xl
-                transform duration-200 transition-all focus-visible:outline-black focus:outline-none focus:shadow-none hover:scale-105 focus:scale-95"
-              onClick={() => setNominateDialogOpen(true)}
-            >
-              ノミネートする
-            </button>
+            {
+              nominateEnd ? (
+                <Link href={router.asPath.split("#")[0] + "#vote-anchor"}>
+                  <a
+                    className="block text-center px-16 py-4 my-4 bg-gradient-to-r from-primary to-primary-light text-white rounded-full shadow-lg text-xl
+                      transform duration-200 transition-all focus-visible:outline-black focus:outline-none focus:shadow-none hover:scale-105 focus:scale-95"
+                  >
+                    投票する
+                  </a>
+                </Link>
+              ) : (
+                <button
+                  className="px-16 py-4 my-4 bg-gradient-to-r from-primary to-primary-light text-white rounded-full shadow-lg text-xl
+                    transform duration-200 transition-all focus-visible:outline-black focus:outline-none focus:shadow-none hover:scale-105 focus:scale-95"
+                  onClick={() => setNominateDialogOpen(true)}
+                >
+                  {initialized ? "ノミネートする" : "ノミネートする" /* 初期値 */}
+                </button>
+              )
+            }
           </section>
 
-          <section className="w-full my-8">
+          <section className="w-full mt-8">
             <h1 className="text-lg mb-4 mx-2">ピックアップ</h1>
             <button
               className={classNames(mode === "late" ? "text-black font-bold underline" : "text-gray-400",
@@ -139,10 +170,10 @@ const Index: React.FC<Props> = ({ words: _words }) => {
               <div className="pl-2"/>
             </div>
           </section>
-          
+          <div className="mb-16" id="vote-anchor"/>
           <article className="self-start w-full my-8">
             <h1 className="text-lg mb-4">ノミネート一覧</h1>
-            <div className="flex flex-row text-sm mt-4 mb-2 w-full overflow-hidden overflow-x-scroll overscroll-x-contain sm:overflow-x-auto">
+            <div className="flex flex-row text-sm mt-4 mb-2 border-gray-200 border-b w-full overflow-hidden overflow-x-scroll overscroll-x-contain sm:overflow-x-auto">
               <button className={classNames("flex flex-row flex-shrink-0 items-center mr-2 px-2 focus-visible:outline-black focus:outline-none", !sort && "mr-3")} onClick={() => setSort(!sort)}>
                 <MdArrowDownward className={classNames("transform transition-all", !sort && "rotate-180")}/>
                 { sort ? "新しい順" : "古い順" }
@@ -163,8 +194,16 @@ const Index: React.FC<Props> = ({ words: _words }) => {
             {listWords.map((item) => (
               <WordListItem key={item.content} word={item}/>
             ))}
+            {
+              listWords.length === 0 && (
+                <section className="text-center text-gray-400 mt-24 sm:mb-12">
+                  条件を満たす流行語はありませんでした
+                </section>
+              )
+            }
           </article>
         </div>
+        <Footer/>
       </div>
       <NominateDialog open={nominateDialogOpen} onClose={handleNominateDialogClose}/>
       <MemberSelectDialog open={memberSelectDialog} init={filter == null ? [] : (filter ?? members).map(member => member.id)} onClose={handleMemberSelectDone}/>

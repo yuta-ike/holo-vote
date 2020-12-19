@@ -24,7 +24,14 @@ const MemberDialog: React.FC<Props> = ({ open, onClose, member }) => {
       TransitionComponent={Transition}
       onClose={onClose}
     >
-      <DialogTitle>{member.name}<span className="ml-4 text-sm">{member.chineseName}/{member.englishName}</span></DialogTitle>
+      <DialogTitle>{member.name}<span className="ml-4 text-sm">
+        {
+          member.chineseName !== "" ? (
+            `${member.chineseName}/${member.englishName}`
+          ) : (
+            member.englishName
+          )
+        }</span></DialogTitle>
       <DialogContent>
         <div className="flex flex-wrap mb-4 justify-center sm:flex-nowrap">
           <div className="flex-shrink-0 sm:mr-2">

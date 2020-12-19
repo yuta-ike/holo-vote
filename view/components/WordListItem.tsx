@@ -6,12 +6,14 @@ import Word from '../../types/word'
 import VoteDialog from '../dialog/VoteDialog'
 import Member from '../../types/member'
 import MemberDialog from '../dialog/MemberDialog'
+import classNames from 'classnames'
 
 type Props = {
   word: Omit<Word, "comments">
+  className?: string
 }
 
-const WordListItem: React.FC<Props> = ({ word }) => {
+const WordListItem: React.FC<Props> = ({ word, className = "" }) => {
   const [voteDialogOpen, setVoteDialogOpen] = useState(false)
   const [member, setMember] = useState<Member | null>(null)
   
@@ -29,10 +31,10 @@ const WordListItem: React.FC<Props> = ({ word }) => {
     <>
       <Link href={`/word/${word.id}`}>
         <section
-          className="flex flex-col items-start border-solid border-gray-200 border-t sm:px-2 sm:py-4 cursor-pointer hover:bg-gray-50"
+          className={classNames("flex flex-col items-start border-solid border-gray-200 border-b sm:px-2 sm:py-4 cursor-pointer hover:bg-gray-50", className)}
           role="button"
         >
-          <div className="flex flex-row justify-start sm:justify-between items-center w-full py-2">
+          <div className="flex flex-row justify-start sm:justify-between items-center w-full py-1 sm:py-0 max-w-screen-lg mx-auto">
             <div className="flex flex-row flex-wrap mr-2 w-24 justify-center">
               {
                 word.members.map(member => (

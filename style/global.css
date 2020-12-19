@@ -18,3 +18,11 @@
   bottom: 0;
   right: 0;
 }
+
+.top-shadow {
+  box-shadow: 0 -5px 10px -5px rgba(0, 0, 0, 0.1);
+}
+
+.min-h-15{
+  min-height: 15rem;
+}

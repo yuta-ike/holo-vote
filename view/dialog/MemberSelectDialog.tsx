@@ -19,9 +19,10 @@ type Props = {
   open: boolean
   onClose: (selected: number[]) => void
   init?: number[]
+  allowEmpty?: boolean
 }
 
-const MemberSelectDialog: React.FC<Props> = ({ open, onClose, init = [] }) => {
+const MemberSelectDialog: React.FC<Props> = ({ open, onClose, init = [], allowEmpty = false }) => {
   const [selected, { toggle }, setItem] = useSet<number>(init)
   const ref = useRef(null)
 
@@ -46,6 +47,8 @@ const MemberSelectDialog: React.FC<Props> = ({ open, onClose, init = [] }) => {
   }, selected.length)
 
   const fullScreen = useIsSp()
+
+  const disabled = allowEmpty ? false : selected.length === 0
 
   return (
     <Dialog
@@ -94,9 +97,9 @@ const MemberSelectDialog: React.FC<Props> = ({ open, onClose, init = [] }) => {
           ))
         }
       </DialogContent>
-      <DialogActions className="dialog-action-area flex flex-col">
+      <DialogActions className="top-shadow flex flex-col">
         <style>{`
-          .dialog-action-area {
+          .top-shadow {
              box-shadow: 0 -20px 25px -5px rgba(0, 0, 0, 0.1);
           }
         `}</style>
@@ -127,8 +130,8 @@ const MemberSelectDialog: React.FC<Props> = ({ open, onClose, init = [] }) => {
           }
           <button
             onClick={() => onClose(selected)}
-            disabled={selected.length === 0}
-            className={classNames(selected.length > 0 ?
+            disabled={disabled}
+            className={classNames(!disabled ?
                 "bg-gradient-to-r from-primary to-primary-light text-white shadow-lg transform duration-200 transition-all focus:shadow-none hover:scale-105 focus:scale-95" :
                 "bg-gray-300 text-white shadow-none cursor-default",
                 `px-8 py-2 my-4 rounded-full focus-visible:outline-black focus:outline-none`)}

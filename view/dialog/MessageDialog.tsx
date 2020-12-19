@@ -2,7 +2,6 @@ import Dialog from '@material-ui/core/Dialog'
 import React from 'react'
 import Transition from './transition/Transition'
 import { GiPartyPopper } from 'react-icons/gi'
-import DialogContent from '@material-ui/core/DialogContent'
 
 type Props = {
   open: boolean,
@@ -21,7 +20,7 @@ const MessageDialog: React.FC<Props> = ({open, onClose}) => {
       onClose={handleClose}
     >
       <div className="p-8">
-        <h1 className="mb-8">完了しました！ご協力ありがとうございます！</h1>
+        <h1 className="mb-8">ノミネートが完了しました！</h1>
         <div className="text-8xl w-80">
           <GiPartyPopper className="mx-auto"/>
         </div>
