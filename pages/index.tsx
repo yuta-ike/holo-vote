@@ -88,120 +88,122 @@ const Index: React.FC<Props> = ({ words: _words }) => {
       </Head>
       <div className="bg-gray-100 sm:bg-gray-50">
         <Header onClickNominate={() => setNominateDialogOpen(true)}/>
-        <div className="max-w-screen-xl sm:m-8 px-4 py-8 bg-white min-h-screen round-2 sm:shadow-lg flex flex-col items-center">
-          <dl className="sm:mx-2 p-2 sm:p-4 bg-gray-50 text-black w-full flex flex-row">
-            {
-              Object.entries(topMessage).map(([key, message]) => (
-                <div key={key} className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-center text-center">
-                  <dt className="inline-block text-sm">{key}</dt>
-                  <dd className="inline-block text-xl sm:text-2xl sm:ml-2 font-bold text-primary">
-                    {
-                      message === "%NOMINATE_SUM%" ? (
-                        words.length.toString()
-                      ) : message
-                    }
-                  </dd>
-                </div>
-              ))
-            }
-            {/* <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-center text-center">
-              <dt className="inline-block text-sm">ノミネート数</dt>
-              <dd className="inline-block text-xl sm:text-2xl sm:ml-2 font-bold text-primary">{words.length.toString()}</dd>
-            </div>
-            <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-center text-center">
-              <dt className="inline-block text-sm">ノミネート〆切</dt>
-              <dd className="inline-block text-xl sm:text-2xl sm:ml-2 font-bold text-primary">未定</dd>
-            </div>
-            <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-center text-center">
-              <dt className="inline-block text-sm">投票開始</dt>
-              <dd className="inline-block text-xl sm:text-2xl sm:ml-2 font-bold text-primary">未定</dd>
-            </div> */}
-          </dl>
+        <div className="max-w-screen-xl mx-auto sm:my-8 sm:px-8">
+          <div className="relative w-full flex flex-col items-center px-4 py-8 bg-white min-h-screen round-2 sm:shadow-lg">
+            <dl className="sm:mx-2 p-2 sm:p-4 bg-gray-50 text-black w-full flex flex-row">
+              {
+                Object.entries(topMessage).map(([key, message]) => (
+                  <div key={key} className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-center text-center">
+                    <dt className="inline-block text-sm">{key}</dt>
+                    <dd className="inline-block text-xl sm:text-2xl sm:ml-2 font-bold text-primary">
+                      {
+                        message === "%NOMINATE_SUM%" ? (
+                          words.length.toString()
+                        ) : message
+                      }
+                    </dd>
+                  </div>
+                ))
+              }
+              {/* <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-center text-center">
+                <dt className="inline-block text-sm">ノミネート数</dt>
+                <dd className="inline-block text-xl sm:text-2xl sm:ml-2 font-bold text-primary">{words.length.toString()}</dd>
+              </div>
+              <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-center text-center">
+                <dt className="inline-block text-sm">ノミネート〆切</dt>
+                <dd className="inline-block text-xl sm:text-2xl sm:ml-2 font-bold text-primary">未定</dd>
+              </div>
+              <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-center text-center">
+                <dt className="inline-block text-sm">投票開始</dt>
+                <dd className="inline-block text-xl sm:text-2xl sm:ml-2 font-bold text-primary">未定</dd>
+              </div> */}
+            </dl>
 
-          <section className="mx-2 my-4 sm:my-8 p-4 border-solid border-primary border-2 w-full text-sm">
-            ホロライブ流行語大賞2020（非公式）は、「ノミネート期間」と「投票期間」に分かれています。
-            「ノミネート期間」では、ホロライブファンのみなさんから、ホロライブ流行語のノミネート（登録）を募集します。
-            ノミネートされた言葉の中から投票を行い、流行語を決定します。投票は「投票期間」中にのみ可能です。
-          </section>
-          <section className="my-16">
-            <p className="text-center">あなたの思う「流行語」はなに？</p>
-            {
-              nominateEnd ? (
-                <Link href={router.asPath.split("#")[0] + "#vote-anchor"}>
-                  <a
-                    className="block text-center px-16 py-4 my-4 bg-gradient-to-r from-primary to-primary-light text-white rounded-full shadow-lg text-xl
-                      transform duration-200 transition-all focus-visible:outline-black focus:outline-none focus:shadow-none hover:scale-105 focus:scale-95"
-                  >
-                    投票する
-                  </a>
-                </Link>
-              ) : (
-                <button
-                  className="px-16 py-4 my-4 bg-gradient-to-r from-primary to-primary-light text-white rounded-full shadow-lg text-xl
-                    transform duration-200 transition-all focus-visible:outline-black focus:outline-none focus:shadow-none hover:scale-105 focus:scale-95"
-                  onClick={() => setNominateDialogOpen(true)}
-                >
-                  {initialized ? "ノミネートする" : "ノミネートする" /* 初期値 */}
-                </button>
-              )
-            }
-          </section>
-
-          <section className="w-full mt-8">
-            <h1 className="text-lg mb-4 mx-2">ピックアップ</h1>
-            <button
-              className={classNames(mode === "late" ? "text-black font-bold underline" : "text-gray-400",
-                "transition-all text-md mx-2 focus-visible:outline-black focus:outline-none")}
-              onClick={() => setMode("late")}
-            >
-              最新
-            </button>
-            <button
-              className={classNames(mode === "random" ? "text-black font-bold underline" : "text-gray-400",
-                  "transition-all text-md mx-2 focus-visible:outline-black focus:outline-none")}
-              onClick={() => setMode("random")}
-            >
-              ランダム
-            </button>
-            <div className="-ml-4 -mr-4 p-2 overflow-x-scroll overscroll-x-contain flex flex-row flex-nowrap whitespace-nowrap">
-              {pickup.map(item => (
-                <WordCard key={item.content} word={item}/>
-              ))}
-              <div className="pl-2"/>
-            </div>
-          </section>
-          <div className="mb-16" id="vote-anchor"/>
-          <article className="self-start w-full my-8">
-            <h1 className="text-lg mb-4">ノミネート一覧</h1>
-            <div className="flex flex-row text-sm mt-4 mb-2 border-gray-200 border-b w-full overflow-hidden overflow-x-scroll overscroll-x-contain sm:overflow-x-auto">
-              <button className={classNames("flex flex-row flex-shrink-0 items-center mr-2 px-2 focus-visible:outline-black focus:outline-none", !sort && "mr-3")} onClick={() => setSort(!sort)}>
-                <MdArrowDownward className={classNames("transform transition-all", !sort && "rotate-180")}/>
-                { sort ? "新しい順" : "古い順" }
-              </button>
-              <button className="px-2 focus-visible:outline-black focus:outline-none flex items-center min-w-0" onClick={() => setMemberSelectDialogOpen(true)}>
-                <span className="flex-0 flex-shrink-0">フィルター：</span>
-                {
-                  filter == null ? "全員" : (
-                    <div
-                      className="scroll-wrapper flex flex-row flex-nowrap items-center my-2 whitespace-nowrap px-2 cursor-pointer sm:overflow-x-scroll sm:overscroll-x-contain"
+            <section className="mx-2 my-4 sm:my-8 p-4 border-solid border-primary border-2 w-full text-sm">
+              ホロライブ流行語大賞2020（非公式）は、「ノミネート期間」と「投票期間」に分かれています。
+              「ノミネート期間」では、ホロライブファンのみなさんから、ホロライブ流行語のノミネート（登録）を募集します。
+              ノミネートされた言葉の中から投票を行い、流行語を決定します。投票は「投票期間」中にのみ可能です。
+            </section>
+            <section className="my-16">
+              <p className="text-center">あなたの思う「流行語」はなに？</p>
+              {
+                nominateEnd ? (
+                  <Link href={router.asPath.split("#")[0] + "#vote-anchor"}>
+                    <a
+                      className="block text-center px-16 py-4 my-4 bg-gradient-to-r from-primary to-primary-light text-white rounded-full shadow-lg text-xl
+                        transform duration-200 transition-all focus-visible:outline-black focus:outline-none focus:shadow-none hover:scale-105 focus:scale-95"
                     >
-                      {filter.map(member => <NameChip key={member.id} member={member} selected={true} selectable={false}/>)}
-                    </div>
-                  )
-                }
+                      投票する
+                    </a>
+                  </Link>
+                ) : (
+                  <button
+                    className="px-16 py-4 my-4 bg-gradient-to-r from-primary to-primary-light text-white rounded-full shadow-lg text-xl
+                      transform duration-200 transition-all focus-visible:outline-black focus:outline-none focus:shadow-none hover:scale-105 focus:scale-95"
+                    onClick={() => setNominateDialogOpen(true)}
+                  >
+                    {initialized ? "ノミネートする" : "ノミネートする" /* 初期値 */}
+                  </button>
+                )
+              }
+            </section>
+
+            <section className="w-full mt-8">
+              <h1 className="text-lg mb-4 mx-2">ピックアップ</h1>
+              <button
+                className={classNames(mode === "late" ? "text-black font-bold underline" : "text-gray-400",
+                  "transition-all text-md mx-2 focus-visible:outline-black focus:outline-none")}
+                onClick={() => setMode("late")}
+              >
+                最新
               </button>
-            </div>
-            {listWords.map((item) => (
-              <WordListItem key={item.content} word={item}/>
-            ))}
-            {
-              listWords.length === 0 && (
-                <section className="text-center text-gray-400 mt-24 sm:mb-12">
-                  条件を満たす流行語はありませんでした
-                </section>
-              )
-            }
-          </article>
+              <button
+                className={classNames(mode === "random" ? "text-black font-bold underline" : "text-gray-400",
+                    "transition-all text-md mx-2 focus-visible:outline-black focus:outline-none")}
+                onClick={() => setMode("random")}
+              >
+                ランダム
+              </button>
+              <div className="-ml-4 -mr-4 p-2 overflow-x-scroll overscroll-x-contain flex flex-row flex-nowrap whitespace-nowrap">
+                {pickup.map(item => (
+                  <WordCard key={item.content} word={item}/>
+                ))}
+                <div className="pl-2"/>
+              </div>
+            </section>
+            <div className="mb-16" id="vote-anchor"/>
+            <article className="self-start w-full my-8">
+              <h1 className="text-lg mb-4">ノミネート一覧</h1>
+              <div className="flex flex-row text-sm mt-4 mb-2 border-gray-200 border-b w-full overflow-hidden overflow-x-scroll overscroll-x-contain sm:overflow-x-auto">
+                <button className={classNames("flex flex-row flex-shrink-0 items-center mr-2 px-2 focus-visible:outline-black focus:outline-none", !sort && "mr-3")} onClick={() => setSort(!sort)}>
+                  <MdArrowDownward className={classNames("transform transition-all", !sort && "rotate-180")}/>
+                  { sort ? "新しい順" : "古い順" }
+                </button>
+                <button className="px-2 focus-visible:outline-black focus:outline-none flex items-center min-w-0" onClick={() => setMemberSelectDialogOpen(true)}>
+                  <span className="flex-0 flex-shrink-0">フィルター：</span>
+                  {
+                    filter == null ? "全員" : (
+                      <div
+                        className="scroll-wrapper flex flex-row flex-nowrap items-center my-2 whitespace-nowrap px-2 cursor-pointer sm:overflow-x-scroll sm:overscroll-x-contain"
+                      >
+                        {filter.map(member => <NameChip key={member.id} member={member} selected={true} selectable={false}/>)}
+                      </div>
+                    )
+                  }
+                </button>
+              </div>
+              {listWords.map((item) => (
+                <WordListItem key={item.content} word={item}/>
+              ))}
+              {
+                listWords.length === 0 && (
+                  <section className="text-center text-gray-400 mt-24 sm:mb-12">
+                    条件を満たす流行語はありませんでした
+                  </section>
+                )
+              }
+            </article>
+          </div>
         </div>
         <Footer/>
       </div>

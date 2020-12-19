@@ -179,8 +179,8 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
                 コレに投票する!!
               </button>
             </div>
-            <div className="flex flex-col sm:flex-row w-full">
-              <section className="sm:w-1/2">
+            <div className="flex flex-col md:flex-row w-full">
+              <section className="md:w-1/2">
                 <h1 className="ml-4">ホロメン情報</h1>
                 <div ref={ref} className="w-full h-full flex flex-row flex-nowrap overflow-x-scroll overscroll-x-contain">
                   {
@@ -202,7 +202,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
                   </button>
                 </div>
               </section>
-              <section className="sm:w-1/2" id="video-anchor">
+              <section className="md:w-1/2" id="video-anchor">
                 <h1 className="ml-4">関連動画</h1>
                 <div className="w-full h-full flex flex-row flex-nowrap overflow-x-scroll overscroll-x-contain">
                   {
