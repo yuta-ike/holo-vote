@@ -5,9 +5,8 @@ import { google } from 'googleapis'
 
 const youtube = google.youtube({
   version: 'v3',
-  auth: process.env.NEXT_PUBLIC_YOUTUBE_API_KEY
+  auth: process.env.YOUTUBE_API_KEY
 })
-console.log(process.env.NEXT_PUBLIC_YOUTUBE_API_KEY)
 
 const videoIdUpload = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   if (req.method === 'POST') {
