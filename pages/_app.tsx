@@ -13,24 +13,26 @@ const App: React.FC<AppProps> = ({ Component, pageProps }) => {
   useEffect(() => {
     const { auth, db, remoteConfig } = initFirebase()
 
-    remoteConfig().fetchAndActivate().then(() => {
-      let topMessage: Record<string, string> = {}
-      let footerMessage: Record<string, string> = {}
-      try{
-        footerMessage = JSON.parse(remoteConfig().getString("footerMessage")) as Record<string, string>
-        topMessage = JSON.parse(remoteConfig().getString("topMessage")) as Record<string, string>
-      }catch{}
+    if (window != null) {
+      remoteConfig().fetchAndActivate().then(() => {
+        let topMessage: Record<string, string> = {}
+        let footerMessage: Record<string, string> = {}
+        try{
+          footerMessage = JSON.parse(remoteConfig().getString("footerMessage")) as Record<string, string>
+          topMessage = JSON.parse(remoteConfig().getString("topMessage")) as Record<string, string>
+        }catch{}
 
-      setGlobalStates(prev => ({
-        ...prev,
-        initialized: true,
-        nominateEnd: remoteConfig().getBoolean("nominateEnd"),
-        voteStart: remoteConfig().getBoolean("voteStart"),
-        voteStartDate: remoteConfig().getString("VOTE_START_DATE"),
-        topMessage,
-        footerMessage,
-      }))
-    })
+        setGlobalStates(prev => ({
+          ...prev,
+          initialized: true,
+          nominateEnd: remoteConfig().getBoolean("nominateEnd"),
+          voteStart: remoteConfig().getBoolean("voteStart"),
+          voteStartDate: remoteConfig().getString("VOTE_START_DATE"),
+          topMessage,
+          footerMessage,
+        }))
+      })
+    }
 
     auth().onAuthStateChanged(async (user) => {
       setGlobalStates(prev => ({...prev, user}))

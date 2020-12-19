@@ -18,15 +18,16 @@ const initFirebase = () => {
   if (!firebase.apps.length) {
     firebase.initializeApp(config)
 
-    const remoteConfig = firebase.remoteConfig()
-    console.log(process.env.NODE_ENV)
-    remoteConfig.settings = {
-      minimumFetchIntervalMillis: (process.env.NODE_ENV === "development" ? 10 : 60 * 60) * 1000,
-      fetchTimeoutMillis: 60 * 1000,
-    }
-    remoteConfig.defaultConfig = {
-      voteStart: false,
-      nominateEnd: false,
+    if(window != null){
+      const remoteConfig = firebase.remoteConfig()
+      remoteConfig.settings = {
+        minimumFetchIntervalMillis: (process.env.NODE_ENV === "development" ? 10 : 60 * 60) * 1000,
+        fetchTimeoutMillis: 60 * 1000,
+      }
+      remoteConfig.defaultConfig = {
+        voteStart: false,
+        nominateEnd: false,
+      }
     }
   }
 
