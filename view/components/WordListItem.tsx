@@ -40,9 +40,14 @@ const WordListItem: React.FC<Props> = ({ word, className = "" }) => {
           <div className="flex flex-row justify-start sm:justify-between items-center w-full py-1 sm:py-0 max-w-screen-lg mx-auto">
             <div className="flex flex-row flex-wrap mr-2 w-24 justify-center">
               {
-                word.members.map(member => (
+                word.members.slice(0, 2).map(member => (
                   <Image key={member.id} onClick={handleOpenMemberDialog(member)} className="rounded-md bg-white" src={`/${member.imageAPath}`} width={70} height={70} />
                 ))
+              }
+              {
+                word.members.length > 2 && (
+                  <p>+{word.members.length - 2}人</p>
+                )
               }
               {/* <Image onClick={handleOpenMemberDialog(member)} className="rounded-full" src="/monster01.png" width={50} height={50} /> */}
             </div>
