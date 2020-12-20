@@ -29,6 +29,7 @@ import toFormatApproximateTime from '../../utils/date/toFormatApproximateTime'
 import Footer from '../../view/components/Footer'
 import { firestore } from 'firebase-admin'
 import outLink from '../../utils/ga/outLink'
+import ReportDialog from '../../view/dialog/ReportDialog'
 
 type SerializedWord = Omit<Word, "comments"> & { comments: SerializedComment[] }
 
@@ -48,6 +49,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
   const [voteDialogOpen, setVoteDialogOpen] = useState(false)
   const [memberSelectDialogOpen, setMemberSelectDialogOpen] = useState(false)
   const [videoDialogOpen, setVideoDialogOpen] = useState(false)
+  const [reportDialogOpen, setReportDialogOpen] = useState(false)
   const [likedIds, setLikedIds] = useState<string[]>([])
   const [comment, setComment] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -74,6 +76,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
       like: [],
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      createdBy: auth.currentUser.uid
     })
     setComment("")
     setIsLoading(false)
@@ -141,8 +144,8 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
         <meta property="og:url" content={router.asPath} />
         <meta property="og:image" content={`/api/ogp/word/${word.id}`} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@holovote" />
-        <meta name="twitter:url" content={router.asPath} />
+        {/* <meta name="twitter:site" content="@holovote" /> */}
+        <meta name="twitter:url" content={`https://${process.env.NEXT_PUBLIC_VERCEL_URL}/${router.asPath}`} />
         <meta name="twitter:title" content={`${word.content} ー ${word.members.map(member => member.name).join(" ")}`} />
         <meta name="twitter:description" content={`${word.content} ー ${word.members.map(member => member.name).join(" ")}    【非公式】ホロライブ流行語大賞2020!!`} />
         <meta name="twitter:image" content={`https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/ogp/word/${word.id}`} />
@@ -228,6 +231,16 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
                 </div>
               </section>
             </div>
+            <section className="flex flex-col mt-12 max-w-2xl w-full">
+              <h1>通報</h1>
+              <p className="leading-none">
+              この投稿が不適切である場合、
+              <button className="inline my-4 text-red-400" onClick={() => setReportDialogOpen(true)}>
+                こちら
+              </button>
+              からご報告をお願いします
+              </p>
+            </section>
             <section id="comment-anchor" className="flex flex-col my-12 max-w-2xl w-full">
               <h1>応援コメント!!</h1>
               <div className="flex w-full justify-between my-8">
@@ -301,6 +314,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
       <VoteDialog open={voteDialogOpen} onClose={() => setVoteDialogOpen(false)} word={word} />
       <MemberSelectDialog open={memberSelectDialogOpen} onClose={handleAddMember}/>
       <VideoAddDialog open={videoDialogOpen} onClose={handleVideoAdd}/>
+      {/* <ReportDialog open={reportDialogOpen} onClose={() => setReportDialogOpen(false)} word={word}/> */}
     </>
   )
 }
@@ -344,7 +358,7 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async ({ re
     return { props: { word } }
   }catch(e){
     console.log(e)
-    res.setHeader('Location', '/')
+    res.setHeader('Location', '/404')
     res.statusCode = 302
     res.end()
     return

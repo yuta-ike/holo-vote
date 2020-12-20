@@ -13,7 +13,7 @@ import useIsSp from '../../utils/hooks/useIsSp'
 import { MdClose } from 'react-icons/md'
 
 type Props = {
-  open: boolean,
+  open: boolean
   onClose: () => void
 }
 
@@ -43,14 +43,14 @@ const NominateDialog: React.FC<Props> = ({ open, onClose }) => {
   const handleSend = async () => {
     if(disabled) return
     setIsLoading(true)
-    const { firebase, db, analytics } = initFirebase()
+    const { firebase, db, analytics, auth } = initFirebase()
     const ref = await db.collection("words").add({
       content: word,
       memberIds,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       valid: true,
-      videos: [],
+      createdBy: auth.currentUser.uid
     })
 
     analytics.logEvent("nominate", { name: "nominate" })

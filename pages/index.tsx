@@ -78,7 +78,7 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
         <meta property="og:url" content={router.asPath} />
         <meta property="og:image" content={`/api/ogp/word/top`} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@holovote" />
+        {/* <meta name="twitter:site" content="@holovote" /> */}
         <meta name="twitter:url" content={router.asPath} />
         <meta name="twitter:title" content="【非公式】ホロライブ流行語大賞2020!!" />
         <meta name="twitter:description" content={`ホロライブファンでホロライブ流行語大賞を決めませんか？ぜひご参加ください!!`} />
@@ -146,7 +146,7 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
               </button>
               <div className="-ml-4 -mr-4 p-2 overflow-x-scroll overscroll-x-contain flex flex-row flex-nowrap whitespace-nowrap">
                 {pickup.map(item => (
-                  <WordCard key={item.content} word={item}/>
+                  <WordCard key={item.id} word={item}/>
                 ))}
                 <div className="pl-2"/>
               </div>
@@ -193,18 +193,25 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async () => {
-  const { db } = initAdminFirebase()
-  const snapshots = await db().collection("words").orderBy("createdAt").get()
-  const originalWords = snapshots.docs.map<any>(snapshot => ({ ...snapshot.data(), id: snapshot.id }))
-  const words: Omit<SerializedWord, "comments">[] = originalWords.filter(data => data.redirectId == null).map<Omit<SerializedWord, "comments">>((data) => ({
-    id: data.id,
-    content: data.content,
-    members: data.memberIds.map(id => members[id - 1]),
-    videos: data.videos,
-    createdAt: (data.createdAt.toDate() as Date).toISOString()
-  }))
-  return { props: { words, nominateNum: originalWords.length } }
+export const getServerSideProps: GetServerSideProps<Props> = async ({ res }) => {
+  try{
+    const { db } = initAdminFirebase()
+    const snapshots = await db().collection("words").orderBy("createdAt").get()
+    const originalWords = snapshots.docs.map<any>(snapshot => ({ ...snapshot.data(), id: snapshot.id }))
+    const words: Omit<SerializedWord, "comments">[] = originalWords.filter(data => data.redirectId == null).map<Omit<SerializedWord, "comments">>((data) => ({
+      id: data.id,
+      content: data.content,
+      members: data.memberIds.map(id => members[id - 1]),
+      videos: data.videos,
+      createdAt: (data.createdAt.toDate() as Date).toISOString()
+    }))
+    return { props: { words, nominateNum: originalWords.length } }
+  }catch{
+    res.setHeader('Location', '/404')
+    res.statusCode = 302
+    res.end()
+    return
+  }
 }
 
 export default Index
