@@ -173,7 +173,7 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
                 </button>
               </div>
               {listWords.map((item) => (
-                <WordListItem key={item.content} word={item}/>
+                <WordListItem key={item.id} word={item}/>
               ))}
               {
                 listWords.length === 0 && (

@@ -236,9 +236,9 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
               <p className="leading-none">
               この投稿が不適切である場合、
               <button className="inline my-4 text-red-400" onClick={() => setReportDialogOpen(true)}>
-                こちら
+                こちらのフォーム
               </button>
-              からご報告をお願いします
+                {" "}または{" "}<a className="text-red-400" href="https://twitter.com/holovote">@holovote</a>{" "}へご報告をお願いします
               </p>
             </section>
             <section id="comment-anchor" className="flex flex-col my-12 max-w-2xl w-full">
@@ -314,7 +314,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
       <VoteDialog open={voteDialogOpen} onClose={() => setVoteDialogOpen(false)} word={word} />
       <MemberSelectDialog open={memberSelectDialogOpen} onClose={handleAddMember}/>
       <VideoAddDialog open={videoDialogOpen} onClose={handleVideoAdd}/>
-      {/* <ReportDialog open={reportDialogOpen} onClose={() => setReportDialogOpen(false)} word={word}/> */}
+      <ReportDialog open={reportDialogOpen} onClose={() => setReportDialogOpen(false)} word={word}/>
     </>
   )
 }
