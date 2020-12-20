@@ -25,7 +25,7 @@ const WordListItem: React.FC<Props> = ({ word, className = "" }) => {
     analytics.logEvent("select_item", { item_list_name: word.content, item_list_id: word.id, name: "wordlistitem" })
   }
 
-  const handleOpenMemberDialog = (member: Member) => (e: MouseEvent<HTMLInputElement>) => {
+  const handleOpenMemberDialog = (member: Member) => (e: any) => {
     e.preventDefault()
     setMember(member)
   }

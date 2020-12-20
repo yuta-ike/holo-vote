@@ -12,7 +12,7 @@ import isSameDay from "../utils/date/isSameDay"
 
 const defaultDescription = `ホロライブ流行語大賞2020（非公式）は、「ノミネート期間」と「投票期間」に分かれています。「ノミネート期間」では、ホロライブファンのみなさんから、ホロライブ流行語のノミネート（登録）を募集します。ノミネートされた言葉の中から投票を行い、流行語を決定します。投票は「投票期間」中にのみ可能です。`
 
-const MESSAGES: string[] = ['ちょっと待ってにぇ', 'ちょっと待つぺこ', 'ちょっと待つのら〜']
+const MESSAGES: string[] = ['ちょっと待ってにぇ', 'ちょっと待つぺこ', 'ちょっと待つのら〜', 'ちょっと待つっす!!']
 
 const getRandomImage = (): string => MESSAGES[Math.floor((Math.random() * MESSAGES.length))]
 
