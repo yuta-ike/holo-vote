@@ -26,7 +26,6 @@ const word: Omit<Omit<Word, "createdAt">, "comments"> = {
 
 
 const Page404 = () => {
-  const [open, setOpen] = useState(true)
   return (
     <div className="w-full h-screen pb-10 flex flex-col items-center justify-center">
       <div className="text-center flex flex-col items-center p-4 box-border">
@@ -47,7 +46,6 @@ const Page404 = () => {
           </p>
         </div>
       </div>
-      <ReportDialog open={open} onClose={() => setOpen(false)} word={word}/>
     </div>
   )
 }
