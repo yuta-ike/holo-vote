@@ -40,7 +40,7 @@ type Params = {
   wordId: string
 }
 
-const FIX_COMMENTS = ["いいね", "これは草", "大草原", "！？！？"]
+const FIX_COMMENTS = ["いいね！", "これは草", "大草原", "！？！？"]
 
 const WordPage: React.FC<Props> = ({ word: _word }) => {
   const [word, setWord] = useState<Omit<Word, "createdAt">>({..._word, comments: _word.comments.map(unserialize)})
