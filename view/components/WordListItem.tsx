@@ -19,23 +19,23 @@ const WordListItem: React.FC<Props> = ({ word, className = "" }) => {
   const [member, setMember] = useState<Member | null>(null)
   
   const handleClickVote = (e: MouseEvent<HTMLInputElement>) => {
-    e.stopPropagation()
+    e.preventDefault()
     setVoteDialogOpen(true)
     const { analytics } = initFirebase()
     analytics.logEvent("select_item", { item_list_name: word.content, item_list_id: word.id, name: "wordlistitem" })
   }
 
-  const handleOpenMemberDialog = (member: Member) => (e: any) => {
-    e.stopPropagation()
+  const handleOpenMemberDialog = (member: Member) => (e: MouseEvent<HTMLInputElement>) => {
+    e.preventDefault()
     setMember(member)
   }
   
   return (
     <>
-      <Link href={`/word/${word.id}`}>
-        <section
+      <Link href={`/word/${word.id}?fromList=true`} as={`/word/${word.id}`}>
+        <a
+          id={word.id}
           className={classNames("flex flex-col items-start border-solid border-gray-200 border-b sm:px-2 sm:py-4 cursor-pointer hover:bg-gray-50", className)}
-          role="button"
         >
           <div className="flex flex-row justify-start sm:justify-between items-center w-full py-1 sm:py-0 max-w-screen-lg mx-auto">
             <div className="flex flex-row flex-wrap mr-2 w-24 justify-center">
@@ -62,7 +62,7 @@ const WordListItem: React.FC<Props> = ({ word, className = "" }) => {
               投票
             </button>
           </div>
-        </section>
+        </a>
       </Link>
       <VoteDialog open={voteDialogOpen} onClose={() => setVoteDialogOpen(false)} word={word} />
       {

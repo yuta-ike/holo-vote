@@ -24,7 +24,6 @@ import Member from '../../types/member'
 import { useRouter } from 'next/router'
 import MemberSelectDialog from '../../view/dialog/MemberSelectDialog'
 import VideoAddDialog from '../../view/dialog/VideoAddDialog'
-import useIsSp from '../../utils/hooks/useIsSp'
 import toFormatApproximateTime from '../../utils/date/toFormatApproximateTime'
 import Footer from '../../view/components/Footer'
 import { firestore } from 'firebase-admin'
@@ -40,6 +39,8 @@ type Props = {
 type Params = {
   wordId: string
 }
+
+const FIX_COMMENTS = ["いいね", "これは草", "大草原", "！？！？"]
 
 const WordPage: React.FC<Props> = ({ word: _word }) => {
   const [word, setWord] = useState<Omit<Word, "createdAt">>({..._word, comments: _word.comments.map(unserialize)})
@@ -67,7 +68,15 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
     })
   }, [])
 
-  const handleCommentSend = async () => {
+  const handleQuickSend = (comment: string) => () => {
+    sendComment(comment)
+  }
+
+  const handleCommentSend = () => {
+    sendComment(comment)
+  }
+
+  const sendComment = async (comment: string) => {
     const { firebase, db, auth } = initFirebase()
     setIsLoading(true)
     const ref = await db.collection("words").doc(word.id).collection("comments").add({
@@ -135,6 +144,12 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
     router.reload()
   }
 
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0, left: 0, behavior: 'smooth'
+    })
+  }
+
   return (
     <>
       <Head>
@@ -144,7 +159,6 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
         <meta property="og:url" content={router.asPath} />
         <meta property="og:image" content={`/api/ogp/word/${word.id}`} />
         <meta name="twitter:card" content="summary_large_image" />
-        {/* <meta name="twitter:site" content="@holovote" /> */}
         <meta name="twitter:url" content={`https://${process.env.NEXT_PUBLIC_VERCEL_URL}/${router.asPath}`} />
         <meta name="twitter:title" content={`${word.content} ー ${word.members.map(member => member.name).join(" ")}`} />
         <meta name="twitter:description" content={`${word.content} ー ${word.members.map(member => member.name).join(" ")}    【非公式】ホロライブ流行語大賞2020!!`} />
@@ -152,18 +166,21 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
       </Head>
       <div className="bg-gray-100 sm:bg-gray-50">
         <Header onClickNominate={() => setNominateDialogOpen(true)} onClickVote={() => setVoteDialogOpen(true)}/>
-        <Link href="/">
+        <Link href={router.query.fromList ? `/?from=${word.id}` : "/"} as="/">
           <a className="block ml-8 py-4">
             一覧へ戻る
           </a>
         </Link>
         <div className="max-w-screen-xl mx-auto sm:mb-8 sm:px-8">
           <div className="relative w-full flex flex-col items-center px-4 py-8 bg-white min-h-screen round-2 sm:shadow-lg">
-            <section className="sticky z-40 sm:top-20 sm:-mx-8 top-16 w-screen flex flex-col items-start text-center py-2 bg-gradient-to-r from-primary to-primary-light text-white shadow-lg">
+            <button
+              className="sticky z-40 sm:top-20 sm:-mx-8 top-16 w-screen flex flex-col items-start text-center py-2 bg-gradient-to-r from-primary to-primary-light text-white shadow-lg"
+              onClick={scrollToTop}
+            >
               <blockquote className="w-full self-center my-1 text-md sm:text-2xl italic break-all">
                 {word.content}
               </blockquote>
-            </section>
+            </button>
             <div className="flex-1 flex flex-col items-center mt-12 mb-20" id="vote-anchor">
               <div className="my-4">
                 \ 投票して盛り上げよう!! /
@@ -231,19 +248,18 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
                 </div>
               </section>
             </div>
-            <section className="flex flex-col mt-12 max-w-2xl w-full">
-              <h1>通報</h1>
+            <section className="flex flex-col mt-8 sm:mt-16 max-w-2xl w-full text-sm text-gray-400 text-center">
               <p className="leading-none">
               この投稿が不適切である場合、
-              <button className="inline my-4 text-red-400" onClick={() => setReportDialogOpen(true)}>
+              <button className="inline my-4 text-red-300" onClick={() => setReportDialogOpen(true)}>
                 こちらのフォーム
               </button>
-                {" "}または{" "}<a className="text-red-400" href="https://twitter.com/holovote">@holovote</a>{" "}へご報告をお願いします
+                {" "}または{" "}<a className="text-red-300" href="https://twitter.com/holovote">@holovote</a>{" "}へご報告をお願いします
               </p>
             </section>
             <section id="comment-anchor" className="flex flex-col my-12 max-w-2xl w-full">
-              <h1>応援コメント!!</h1>
-              <div className="flex w-full justify-between my-8">
+              <h1>応援コメント!!<span className="text-sm">（匿名）</span></h1>
+              <div className="flex w-full justify-between mt-8">
                 <TextField
                   value={comment}
                   onChange={e => setComment(e.target.value)}
@@ -264,6 +280,22 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
                 >
                   投稿
                 </button>
+              </div>
+              <div className="mb-6 py-2 flex flex-row items-center flex-nowrap overflow-x-scroll overscroll-x-contain whitespace-nowrap">
+                <p className="text-sm mr-2">
+                  ワンタップで投稿
+                </p>
+                {
+                  FIX_COMMENTS.map(comment => (
+                    <button
+                      key={comment}
+                      onClick={handleQuickSend(comment)}
+                      className="px-4 py-2 mx-1 border border-gray-300 rounded-sm focus-visible:outline-black focus:outline-none hover:bg-gray-100"
+                    >
+                      {comment}
+                    </button>
+                  ))
+                }
               </div>
               <section>
                 {

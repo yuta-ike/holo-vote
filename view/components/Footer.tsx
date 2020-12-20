@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react'
-import { useGlobalStates } from '../../utils/context/UserProvider'
+import { useGlobalStates } from '../../utils/context/GlobalStatesProvider'
 import useIsSp from '../../utils/hooks/useIsSp'
 
 const Footer = () => {

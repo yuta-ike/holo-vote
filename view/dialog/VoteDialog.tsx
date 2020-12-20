@@ -1,11 +1,11 @@
 import { Dialog, DialogContent, DialogTitle } from '@material-ui/core'
 import classNames from 'classnames'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 import Word from '../../types/word'
 import initFirebase from '../../utils/auth/initFirebase'
 // import signInWithTwitter from '../../utils/auth/signInWithTwitter'
-import { useGlobalStates } from '../../utils/context/UserProvider'
+import { useGlobalStates } from '../../utils/context/GlobalStatesProvider'
 import Transition from './transition/Transition'
 import VoteCompleteDialog from './VoteCompleteDialog'
 

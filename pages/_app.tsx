@@ -1,17 +1,23 @@
-import { DateTime } from "luxon"
 import type { AppProps } from "next/app"
-import { useRouter } from "next/router"
-import {  useEffect, useState } from "react"
+import { Router, useRouter } from "next/router"
+import { DateTime } from "luxon"
+import React, {  useEffect, useState } from "react"
 import "tailwindcss/tailwind.css"
 import "../style/global.css"
 import GlobalState from "../types/globalState"
 import initFirebase from "../utils/auth/initFirebase"
-import GlobalStatesProvider from "../utils/context/UserProvider"
+import GlobalStatesProvider from "../utils/context/GlobalStatesProvider"
+import SortPropProvider from "../utils/context/SortPropProvider"
 import isSameDay from "../utils/date/isSameDay"
 
 const defaultDescription = `ホロライブ流行語大賞2020（非公式）は、「ノミネート期間」と「投票期間」に分かれています。「ノミネート期間」では、ホロライブファンのみなさんから、ホロライブ流行語のノミネート（登録）を募集します。ノミネートされた言葉の中から投票を行い、流行語を決定します。投票は「投票期間」中にのみ可能です。`
 
+const MESSAGES: string[] = ['ちょっと待ってにぇ', 'ちょっと待つぺこ', 'ちょっと待つのら〜']
+
+const getRandomImage = (): string => MESSAGES[Math.floor((Math.random() * MESSAGES.length))]
+
 const App: React.FC<AppProps> = ({ Component, pageProps }) => {
+  const router = useRouter()
   const [globalStates, setGlobalStates] = useState<GlobalState>({ user: null, todayVotes: 0, nominateEnd: false, voteStart: false, initialized: false, description: defaultDescription, topMessage: {}, footerMessage: {}, voteStartDate: "" })
   useEffect(() => {
     const { auth, db, remoteConfig } = initFirebase()
@@ -51,16 +57,27 @@ const App: React.FC<AppProps> = ({ Component, pageProps }) => {
 
   const incrementTodayVotes = () => setGlobalStates(prev => ({...prev, todayVotes: prev.todayVotes + 1}))
   
-  const router = useRouter()
+
+  const [message, setMessage] = useState<string>(() => getRandomImage())
+
+  const [loading, setLoading] = useState(false)
+  useEffect(() => {
+    Router.events.on("routeChangeStart", () => setLoading(true))
+    Router.events.on("routeChangeComplete", () => setLoading(false))
+    Router.events.on("routeChangeError", () => setLoading(false))
+  }, [])
+
+  useEffect(() => {
+    if(loading == false){
+      setMessage(getRandomImage())
+    }
+  }, [loading])
 
   useEffect(() => {
     const { analytics } = initFirebase()
     analytics.logEvent("page_view", { page_location: router.asPath, page_path: router.asPath, page_title: router.asPath })
 
-    // if (!existsGaId) return
-
     const handleRouteChange = (path: string) => {
-      console.log("LOG")
       analytics.logEvent("page_view", { page_location: path, page_path: path, page_title: path })
     }
 
@@ -75,7 +92,18 @@ const App: React.FC<AppProps> = ({ Component, pageProps }) => {
       <link rel="preconnect" href="https://fonts.gstatic.com"/>
       <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;400;700&display=swap" rel="stylesheet"/>
       <GlobalStatesProvider value={{ globalStates, incrementTodayVotes }}>
-        <Component {...pageProps}/>
+        <SortPropProvider>
+          <Component {...pageProps}/>
+          {
+            loading &&
+            <div className="fixed top-0 left-0 w-screen h-screen bg-gray-50 bg-opacity-80 z-50 flex items-center justify-center">
+              <div className="flex flex-col items-center justify-center pb-10">
+                <p className="mb-4">{message}</p>
+                <div className="animate-ping inline-flex rounded-full bg-purple-400 opacity-75 w-4 h-4"/>
+              </div>
+            </div>
+          }
+        </SortPropProvider>
       </GlobalStatesProvider>
     </>
   )

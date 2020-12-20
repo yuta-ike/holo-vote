@@ -14,30 +14,36 @@ type Props = {
 const WordCard: React.FC<Props> = ({ word }) => {
   const [voteDialogOpen, setVoteDialogOpen] = useState(false)
   const [member, setMember] = useState<Member | null>(null)
+
   const handleClickVote = (e: MouseEvent<HTMLInputElement>) => {
-    e.stopPropagation()
+    e.preventDefault()
     setVoteDialogOpen(true)
   }
 
   const handleOpenMemberDialog = (member: Member) => (e: any) => {
-    e.stopPropagation()
+    e.preventDefault()
     setMember(member)
   }
 
   return (
     <>
       <Link href={`/word/${word.id}`}>
-        <section
+        <a
           tabIndex={0}
-          role="button"
           className="flex flex-col flex-shrink-0 items-start justify-between w-72 sm:w-80 pt-1 pl-1 pr-4 pb-4 m-2 bg-gradient-to-r from-primary to-primary-light text-white rounded-md
             cursor-pointer shadow-lg
-            transform duration-200 transition-all focus-visible:outline-black focus:outline-none active:scale-95">
-          <div className="flex flex-row overflow-x-scroll w-full flex-nowrap whitespace-nowrap">
+            transform duration-200 transition-all focus-visible:outline-black focus:outline-none active:scale-95 focus:scale-95 hover:scale-105"
+        >
+          <div className="flex flex-row overflow-x-scroll w-full flex-nowrap whitespace-nowrap items-center">
             {
-              word.members.map(member => (
+              word.members.slice(0, 5).map(member => (
                 <Image key={member.id} onClick={handleOpenMemberDialog(member)} className="flex-shrink-0 rounded-full bg-white p-1 bg-clip-content" src={`/${member.imageAPath}`} width={70} height={70} />
               ))
+            }
+            {
+              word.members.length >= 6 && (
+                <div>+{word.members.length - 5}人</div>
+              )
             }
           </div>
           <blockquote className="w-full self-center text-center mt-6 mb-8 text-lg sm:text-lg italic break-words font-bold">
@@ -49,7 +55,7 @@ const WordCard: React.FC<Props> = ({ word }) => {
           >
             投票する!!
           </button>
-        </section>
+        </a>
       </Link>
       <VoteDialog open={voteDialogOpen} onClose={() => setVoteDialogOpen(false)} word={word} />
       {

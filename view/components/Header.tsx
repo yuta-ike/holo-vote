@@ -4,8 +4,9 @@ import { AiOutlineTwitter } from 'react-icons/ai'
 import { useRouter } from 'next/router'
 import useIsSp from '../../utils/hooks/useIsSp'
 import throttle from 'lodash.throttle'
-import { useGlobalStates } from '../../utils/context/UserProvider'
+import { useGlobalStates } from '../../utils/context/GlobalStatesProvider'
 import outLink from '../../utils/ga/outLink'
+import { useSortProps } from '../../utils/context/SortPropProvider'
 
 type Props = {
   onClickNominate: () => void
@@ -17,6 +18,8 @@ const Header: React.FC<Props> = ({ onClickNominate, onClickVote }) => {
   const router = useRouter()
   const fullScreen = useIsSp()
   const { globalStates: { initialized, nominateEnd } } = useGlobalStates()
+
+  const [sortProps, setSortProps] = useSortProps()
   
   const handleScroll = throttle(() => {
     setScroll(window.scrollY)
@@ -25,6 +28,12 @@ const Header: React.FC<Props> = ({ onClickNominate, onClickVote }) => {
   useEffect(() => {
     window.addEventListener("scroll", handleScroll)
   }, [])
+
+  useEffect(() => {
+    if (scroll > 1500 && sortProps.showWordJumpButton) {
+      setSortProps(prev => ({ ...prev, showWordJumpButton: false }))
+    }
+  }, [scroll])
 
   return (
     <>
@@ -94,7 +103,9 @@ const Header: React.FC<Props> = ({ onClickNominate, onClickVote }) => {
         }
       </header>
       {
-        !initialized ? (
+        sortProps.showWordJumpButton ? (
+          null
+        ) : !initialized ? (
           null
         ) : nominateEnd ? (
           onClickVote == null ? (
