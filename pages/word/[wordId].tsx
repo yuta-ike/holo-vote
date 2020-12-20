@@ -389,11 +389,12 @@ export const getServerSideProps: GetServerSideProps<Props, Params> = async ({ re
     const word = await getWordData(wordId, db)
     return { props: { word } }
   }catch(e){
-    console.log(e)
-    res.setHeader('Location', '/404')
-    res.statusCode = 302
-    res.end()
-    return
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/404',
+      }
+    }
   }
 }
 

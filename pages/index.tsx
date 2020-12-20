@@ -232,10 +232,12 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ res }) => 
     }))
     return { props: { words, nominateNum: originalWords.length } }
   }catch{
-    res.setHeader('Location', '/404')
-    res.statusCode = 302
-    res.end()
-    return
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/404',
+      }
+    }
   }
 }
 

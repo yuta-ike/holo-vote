@@ -29,7 +29,7 @@ const Page404 = () => {
   return (
     <div className="w-full h-screen pb-10 flex flex-col items-center justify-center">
       <div className="text-center flex flex-col items-center p-4 box-border">
-        <p className="text-lg">申し訳ありません。現在アクセスに制限がかかっております。</p>
+        <p className="text-lg">申し訳ありません。エラーが発生しました。</p>
         <p className="my-4 text-sm">「そんなのってないぺこじゃん！！！！」</p>
         <div className="w-full border border-solid my-4"/>
         <div className="w-72 sm:w-96">
