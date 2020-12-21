@@ -62,9 +62,17 @@ const App: React.FC<AppProps> = ({ Component, pageProps }) => {
 
   const [loading, setLoading] = useState(false)
   useEffect(() => {
-    Router.events.on("routeChangeStart", () => setLoading(true))
-    Router.events.on("routeChangeComplete", () => setLoading(false))
-    Router.events.on("routeChangeError", () => setLoading(false))
+    const handleLoadingStart = () => setLoading(true)
+    const handleLoadingFinish = () => setLoading(false)
+    Router.events.on("routeChangeStart", handleLoadingStart)
+    Router.events.on("routeChangeComplete", handleLoadingFinish)
+    Router.events.on("routeChangeError", handleLoadingFinish)
+    
+    return () => {
+      Router.events.off("routeChangeStart", handleLoadingStart)
+      Router.events.off("routeChangeComplete", handleLoadingFinish)
+      Router.events.off("routeChangeError", handleLoadingFinish)
+    }
   }, [])
 
   useEffect(() => {
