@@ -7,16 +7,15 @@ import Header from '../../view/components/Header'
 import NominateDialog from '../../view/dialog/NominateDialog'
 import Word from '../../types/word'
 import Comment from '../../types/comment'
-import { SerializedComment, unserialize } from '../../types/comment'
 import { members } from '../../data/members'
-import { AiOutlineTwitter } from 'react-icons/ai'
+import { AiOutlineLoading3Quarters, AiOutlineTwitter } from 'react-icons/ai'
 import TextField from '@material-ui/core/TextField'
 import { BiPlus } from 'react-icons/bi'
 import { MdThumbUp } from 'react-icons/md'
 import MemberDialog from '../../view/dialog/MemberDialog'
 import VoteDialog from '../../view/dialog/VoteDialog'
 import initFirebase from '../../utils/auth/initFirebase'
-import { GetServerSideProps } from 'next'
+import { GetStaticPaths, GetStaticProps } from 'next'
 import initAdminFirebase from '../../utils/auth/initAdminFirebase'
 import { DateTime } from 'luxon'
 import classNames from 'classnames'
@@ -26,24 +25,22 @@ import MemberSelectDialog from '../../view/dialog/MemberSelectDialog'
 import VideoAddDialog from '../../view/dialog/VideoAddDialog'
 import toFormatApproximateTime from '../../utils/date/toFormatApproximateTime'
 import Footer from '../../view/components/Footer'
-import { firestore } from 'firebase-admin'
-import outLink from '../../utils/ga/outLink'
 import ReportDialog from '../../view/dialog/ReportDialog'
-
-type SerializedWord = Omit<Word, "comments"> & { comments: SerializedComment[] }
+import { useGlobalStates } from '../../utils/context/GlobalStatesProvider'
+import outLink from '../../utils/ga/outLink'
 
 type Props = {
-  word: Omit<SerializedWord, "createdAt">
+  word: Pick<Word, "id" | "content" | "members" | "videos">
 }
 
-type Params = {
+type ParsedUrlQuery = {
   wordId: string
 }
 
 const FIX_COMMENTS = ["いいね！", "これは草", "大草原", "！？！？"]
 
 const WordPage: React.FC<Props> = ({ word: _word }) => {
-  const [word, setWord] = useState<Omit<Word, "createdAt">>({..._word, comments: _word.comments.map(unserialize)})
+  const [word, setWord] = useState<Omit<Word, "createdAt">>({..._word, comments: []})
   const router = useRouter()
   const [nominateDialogOpen, setNominateDialogOpen] = useState(false)
   const [selectedMember, setSelectedMember] = useState<null | Member>(null)
@@ -53,20 +50,53 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
   const [reportDialogOpen, setReportDialogOpen] = useState(false)
   const [likedIds, setLikedIds] = useState<string[]>([])
   const [comment, setComment] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSending, setIsSending] = useState(false)
+  const { globalStates: { user } } = useGlobalStates()
   const ref = useRef(null)
 
-  const disabled = comment.length === 0 || isLoading
+  const disabled = comment.length === 0 || isSending
 
-  const uid = useRef<string>()
   useEffect(() => {
-    const { auth } = initFirebase()
-    auth.onAuthStateChanged((user) => {
-      if(user == null) return
-      uid.current = user.uid
-      setLikedIds(_word.comments.filter(comment => comment.like.includes(uid.current)).map(comment => comment.id))
-    })
+    ;(async () => {
+      const { db } = initFirebase()
+      const [wordSnapshot, commentSnapshots] = await Promise.all([
+        db.collection("words").doc(word.id).get(),
+        db.collection("words").doc(word.id).collection("comments").get(),
+      ])
+      const wordData = wordSnapshot.data()
+      
+      setWord(prev => ({
+        ...prev,
+        content: wordData.content,
+        members: wordData.memberIds.map((id: number) => members[id - 1]),
+        videos: wordData.videos,
+        comments: commentSnapshots.docs.map<Comment>((snapshot, i) => ({
+          id: snapshot.id,
+          serialNumber: i + 1,
+          createdAt: DateTime.fromJSDate(snapshot.data().createdAt.toDate()),
+          content: snapshot.data().content,
+          like: snapshot.data().like,
+        })).reverse(),
+      }))
+      setIsLoading(true)
+    })()
   }, [])
+
+  useEffect(() => {
+    if(user != null) setLikedIds(word.comments.filter(comment => comment.like.includes(user.uid)).map(comment => comment.id))
+  }, [user])
+
+  // const uid = useRef<string>()
+  // useEffect(() => {
+  //   const { auth } = initFirebase()
+
+  //   auth.onAuthStateChanged((user) => {
+  //     if(user == null) return
+  //     uid.current = user.uid
+  //     setLikedIds(word.comments.filter(comment => comment.like.includes(uid.current)).map(comment => comment.id))
+  //   })
+  // }, [word.comments])
 
   const handleQuickSend = (comment: string) => () => {
     sendComment(comment)
@@ -78,7 +108,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
 
   const sendComment = async (comment: string) => {
     const { firebase, db, auth } = initFirebase()
-    setIsLoading(true)
+    setIsSending(true)
     const ref = await db.collection("words").doc(word.id).collection("comments").add({
       content: comment,
       authorId: auth.currentUser.uid,
@@ -88,7 +118,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
       createdBy: auth.currentUser.uid
     })
     setComment("")
-    setIsLoading(false)
+    setIsSending(false)
     const newComment: Comment = {
       content: comment,
       id: ref.id,
@@ -144,11 +174,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
     router.reload()
   }
 
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0, left: 0, behavior: 'smooth'
-    })
-  }
+  const scrollToTop = () => window.scrollTo({ top: 0, left: 0, behavior: 'smooth'})
 
   return (
     <>
@@ -265,7 +291,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
                   onChange={e => setComment(e.target.value)}
                   className="flex-1 mr-2"
                   variant="outlined"
-                  disabled={isLoading}
+                  disabled={isSending}
                   label="コメントを投稿して盛り上げよう!!"
                 />
                 <button
@@ -319,7 +345,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
                           title="いいね"
                         >
                           <MdThumbUp className="mr-1"/>
-                          <span className="text-sm">{(comment.like.length - (comment.like.includes(uid.current) ? 1 : 0)) + (likedIds.includes(comment.id) ? 1 : 0)}</span>
+                          <span className="text-sm">{(comment.like.length - (comment.like.includes(user.uid) ? 1 : 0)) + (likedIds.includes(comment.id) ? 1 : 0)}</span>
                         </button>
                       </div>
                     </section>
@@ -327,9 +353,15 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
                 }
                 {
                   word.comments.length === 0 && (
-                    <section className="text-center text-gray-400 my-16 sm:my-24">
-                      コメントはまだ投稿されていません<br/>コメントを投稿して盛り上げよう!!
-                    </section>
+                    isLoading ? (
+                      <section className="text-gray-400 my-16 sm:my-24">
+                        <AiOutlineLoading3Quarters className="animate-spin text-4xl mx-auto" />
+                      </section>
+                    ) : (
+                      <section className="text-center text-gray-400 my-16 sm:my-24">
+                        コメントはまだ投稿されていません<br/>コメントを投稿して盛り上げよう!!
+                      </section>
+                    )
                   )
                 }
               </section>
@@ -351,41 +383,57 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
   )
 }
 
-const getWordData = async (wordId: string, db: typeof firestore) => {
-  const [wordSnapshot, commentSnapshots] = await Promise.all([
-    db().collection("words").doc(wordId).get(),
-    db().collection("words").doc(wordId).collection("comments").orderBy('createdAt').get(),
-  ])
+// const getWordData = async (wordId: string, db: typeof firestore) => {
+//   const [wordSnapshot, commentSnapshots] = await Promise.all([
+//     db().collection("words").doc(wordId).get(),
+//     db().collection("words").doc(wordId).collection("comments").orderBy('createdAt').get(),
+//   ])
 
-  const wordData = wordSnapshot.data()
-  const commentData = commentSnapshots.docs.map((snapshot) => ({ ...snapshot.data(), id: snapshot.id })) as any[]
+//   const wordData = wordSnapshot.data()
+//   const commentData = commentSnapshots.docs.map((snapshot) => ({ ...snapshot.data(), id: snapshot.id })) as any[]
 
-  if (wordData == null) throw Error()
+//   if (wordData == null) throw Error()
 
-  if(wordData.redirectId != null){
-    return getWordData(wordData.redirectId, db)
+//   if(wordData.redirectId != null){
+//     return getWordData(wordData.redirectId, db)
+//   }
+
+//   const word: Omit<SerializedWord, "createdAt"> = {
+//     id: wordSnapshot.id,
+//     content: wordData.content,
+//     members: wordData.memberIds.map((id: number) => members[id - 1]),
+//     videos: wordData.videos,
+//     comments: commentData.map<SerializedComment>((data, i) => ({
+//       id: data.id,
+//       serialNumber: i + 1,
+//       createdAt: DateTime.fromJSDate(data.createdAt.toDate() as Date).toISO(),
+//       content: data.content,
+//       like: data.like,
+//     })).reverse(),
+//   }
+//   return word
+// }
+
+export const getStaticPaths: GetStaticPaths<ParsedUrlQuery> = async () => {
+  const { db } = initAdminFirebase()
+  const snapshots = await db().collection("words").get()
+  return {
+    paths: snapshots.docs.map(snapshot => snapshot.id).map(wordId => ({ params: { wordId } })),
+    fallback: true,
   }
-
-  const word: Omit<SerializedWord, "createdAt"> = {
-    id: wordSnapshot.id,
-    content: wordData.content,
-    members: wordData.memberIds.map((id: number) => members[id - 1]),
-    videos: wordData.videos,
-    comments: commentData.map<SerializedComment>((data, i) => ({
-      id: data.id,
-      serialNumber: i + 1,
-      createdAt: DateTime.fromJSDate(data.createdAt.toDate() as Date).toISO(),
-      content: data.content,
-      like: data.like,
-    })).reverse(),
-  }
-  return word
 }
 
-export const getServerSideProps: GetServerSideProps<Props, Params> = async ({ res, params: { wordId } }) => {
+export const getStaticProps: GetStaticProps<Props, ParsedUrlQuery> = async ({ params: { wordId } }) => {
   try{
     const { db } = initAdminFirebase()
-    const word = await getWordData(wordId, db)
+    const snapshot = await db().collection("words").doc(wordId).get()
+    const wordData = snapshot.data()
+    const word: Props["word"] = {
+      id: wordId,
+      content: wordData.content,
+      members: wordData.memberIds.map((id: number) => members[id - 1]),
+      videos: wordData.videos,
+    }
     return { props: { word } }
   }catch(e){
     return {

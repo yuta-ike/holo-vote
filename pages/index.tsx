@@ -1,4 +1,4 @@
-import type { GetServerSideProps } from 'next'
+import type { GetStaticProps } from 'next'
 import React, { useEffect, useState } from 'react'
 import Header from '../view/components/Header'
 import { MdArrowDownward, MdClose } from 'react-icons/md'
@@ -218,7 +218,7 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
   )
 }
 
-export const getStaticProps: GetServerSideProps<Props> = async ({ res }) => {
+export const getStaticProps: GetStaticProps<Props> = async () => {
   try{
     const { db } = initAdminFirebase()
     const snapshots = await db().collection("words").orderBy("createdAt").get()
