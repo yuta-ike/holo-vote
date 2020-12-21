@@ -79,7 +79,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
           like: snapshot.data().like,
         })).reverse(),
       }))
-      setIsLoading(true)
+      setIsLoading(false)
     })()
   }, [])
 
