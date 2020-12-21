@@ -363,7 +363,6 @@ const getWordData = async (wordId: string, db: typeof firestore) => {
   if (wordData == null) throw Error()
 
   if(wordData.redirectId != null){
-    console.log(wordData.redirectId)
     return getWordData(wordData.redirectId, db)
   }
 

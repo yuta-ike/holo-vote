@@ -218,7 +218,7 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({ res }) => {
+export const getStaticProps: GetServerSideProps<Props> = async ({ res }) => {
   try{
     const { db } = initAdminFirebase()
     const snapshots = await db().collection("words").orderBy("createdAt").get()
@@ -230,7 +230,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ res }) => 
       videos: data.videos,
       createdAt: (data.createdAt.toDate() as Date).toISOString()
     }))
-    return { props: { words, nominateNum: originalWords.length } }
+    return {
+      props: { words, nominateNum: originalWords.length },
+      revalidate: 5 * 60,
+    }
   }catch{
     return {
       redirect: {
