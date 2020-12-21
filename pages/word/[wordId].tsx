@@ -181,13 +181,13 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
       <Head>
         <title>ホロライブ流行語大賞【非公式】</title>
         <meta property="og:title" content={`【非公式】ホロライブ流行語大賞2020!! ${word.content}`}/>
-        <meta property="og:description" content={`${word.content} ー ${word.members.map(member => member.name).join(" ")}`} />
+        <meta property="og:description" content={`${word.content} ー ${word.members?.map(member => member.name).join(" ") ?? ""}`} />
         <meta property="og:url" content={router.asPath} />
         <meta property="og:image" content={`/api/ogp/word/${word.id}`} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content={`https://${process.env.NEXT_PUBLIC_VERCEL_URL}/${router.asPath}`} />
-        <meta name="twitter:title" content={`${word.content} ー ${word.members.map(member => member.name).join(" ")}`} />
-        <meta name="twitter:description" content={`${word.content} ー ${word.members.map(member => member.name).join(" ")}    【非公式】ホロライブ流行語大賞2020!!`} />
+        <meta name="twitter:title" content={`${word.content} ー ${word.members?.map(member => member.name).join(" ") ?? ""}`} />
+        <meta name="twitter:description" content={`${word.content} ー ${word.members?.map(member => member.name).join(" ") ?? ""}    【非公式】ホロライブ流行語大賞2020!!`} />
         <meta name="twitter:image" content={`https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/ogp/word/${word.id}`} />
       </Head>
       <div className="bg-gray-100 sm:bg-gray-50">
@@ -215,7 +215,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
                 {word.content}
               </blockquote>
               <a
-                href={`https://twitter.com/intent/tweet?url=https://${process.env.NEXT_PUBLIC_VERCEL_URL}${router.asPath.split("#")[0]}&hashtags=${encodeURIComponent(`ホロ流行語大賞_非公式,${word.members.slice(0, 7).map(member => member.name).join(",")}`)}`}
+                href={`https://twitter.com/intent/tweet?url=https://${process.env.NEXT_PUBLIC_VERCEL_URL}${router.asPath.split("#")[0]}&hashtags=${encodeURIComponent(`ホロ流行語大賞_非公式,${word.members?.slice(0, 7).map(member => member.name).join(",") ?? ""}`)}`}
                 className="px-4 py-2 my-4 rounded-full border-twitter text-sm flex items-center
                     transform transition-all bg-twitter text-white hover:shadow-md
                     focus:outline-none focus-visible:outline-black active:shadow-none active:scale-95"
@@ -236,7 +236,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
                 <h1 className="ml-4">ホロメン情報</h1>
                 <div ref={ref} className="w-full h-full flex flex-row flex-nowrap overflow-x-scroll overscroll-x-contain">
                   {
-                    word.members.map(member => (
+                    word.members?.map(member => (
                       <button key={member.id} onClick={() => setSelectedMember(member)} className="flex-none flex flex-col items-center mx-2 my-4 w-52 hover:shadow-md p-2 rounded-md group min-w-0">
                         <div className="w-36">
                           <Image src={`/${member.imageAPath}`} width={220} height={220} />
@@ -258,7 +258,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
                 <h1 className="ml-4">関連動画</h1>
                 <div className="w-full h-full flex flex-row flex-nowrap overflow-x-scroll overscroll-x-contain">
                   {
-                    word.videos.map(video => (
+                    word.videos?.map(video => (
                       <a href={`https://www.youtube.com/watch?v=${video.videoId}`} key={video.videoId} className="flex-none mx-2 my-4 w-52 hover:shadow-md p-2 rounded-md group min-w-0">
                         <Image src={video.thumbnail} width={320} height={220} />
                         <h1 className="mb-2 text-sm group-hover:underline break-all">{video.title}</h1>
@@ -428,6 +428,7 @@ export const getStaticProps: GetStaticProps<Props, ParsedUrlQuery> = async ({ pa
     const { db } = initAdminFirebase()
     const snapshot = await db().collection("words").doc(wordId).get()
     const wordData = snapshot.data()
+    if(wordData.memberIds == null) console.log(wordData)
     const word: Props["word"] = {
       id: wordId,
       content: wordData.content,
