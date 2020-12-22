@@ -203,7 +203,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
               className="sticky z-40 sm:top-20 sm:-mx-8 top-16 w-screen flex flex-col items-start text-center py-2 bg-gradient-to-r from-primary to-primary-light text-white shadow-lg"
               onClick={scrollToTop}
             >
-              <blockquote className="w-full self-center my-1 text-md sm:text-2xl italic break-all">
+              <blockquote className="w-full self-center my-1 text-md sm:text-2xl break-all font-emphasis font-bold">
                 {word.content}
               </blockquote>
             </button>
@@ -211,7 +211,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
               <div className="my-4">
                 \ 投票して盛り上げよう!! /
               </div>
-              <blockquote className="quote-design block relative my-3 px-12 py-2 self-center text-2xl break-all font-bold transition-all hover:tracking-widest">
+              <blockquote className="quote-design block relative my-3 px-12 py-2 self-center text-3xl break-all transition-all hover:tracking-widest font-emphasis font-extrabold">
                 {word.content}
               </blockquote>
               <a

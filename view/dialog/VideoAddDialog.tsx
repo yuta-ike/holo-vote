@@ -2,11 +2,10 @@ import type { ChangeEvent } from 'react'
 import React, { useState } from 'react'
 import Dialog from '@material-ui/core/Dialog'
 import Transition from './transition/Transition'
-import { GiPartyPopper } from 'react-icons/gi'
-import DialogContent from '@material-ui/core/DialogContent'
 import TextField from '@material-ui/core/TextField'
 import classNames from 'classnames'
 import youtubeUrlValidate from '../../utils/validation/youtubeUrlValidate'
+import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 
 type Props = {
   open: boolean,
@@ -23,8 +22,8 @@ const VideoAddDialog: React.FC<Props> = ({open, onClose}) => {
     const videoId = youtubeUrlValidate(text)
     if(videoId == null) return
     setIsLoading(true)
-    setIsLoading(false)
     await onClose(videoId)
+    setIsLoading(false)
     setText("")
     setVideoId("")
   }
@@ -62,8 +61,14 @@ const VideoAddDialog: React.FC<Props> = ({open, onClose}) => {
             onClick={handleTextSend}
             disabled={disabled}
           >
-            投稿
-            </button>
+            {
+              isLoading ? (
+                <AiOutlineLoading3Quarters className="animate-spin text-4xl mx-auto" />
+              ) : (
+                "投稿"
+              )
+            }
+          </button>
         </div>
         {
           videoId != null &&

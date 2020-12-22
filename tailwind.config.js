@@ -5,7 +5,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'sans': ["'M PLUS Rounded 1c'", 'Roboto', 'Helvetica', 'Arial', 'sans-serif']
+        'sans': ["'M PLUS Rounded 1c'", 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+        'emphasis': ["'M PLUS Rounded 1c'"]
       },
       colors: {
         black: {

@@ -46,7 +46,7 @@ const WordCard: React.FC<Props> = ({ word }) => {
               )
             }
           </div>
-          <blockquote className="w-full self-center text-center mt-6 mb-8 text-lg sm:text-lg italic break-words font-bold">
+          <blockquote className="w-full self-center text-center mt-6 mb-8 text-2xl break-words font-emphasis font-bold">
             {word.content}
           </blockquote>
           <button

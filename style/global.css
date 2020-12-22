@@ -1,3 +1,8 @@
+@font-face {
+	font-family: 'puikko';
+	src: url(/fonts/logofont-m_1.1-ah9kl7yha/logotypejp_mp_m_1.1.ttf);
+}
+
 html {
   scroll-padding-top: 100px;
 }

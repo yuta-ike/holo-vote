@@ -115,7 +115,7 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
                 nominateEnd ? (
                   <Link href={router.asPath.split("#")[0] + "#vote-anchor"}>
                     <a
-                      className="block text-center px-16 py-4 my-4 bg-gradient-to-r from-primary to-primary-light text-white rounded-full shadow-lg text-xl
+                      className="block text-center px-16 py-4 my-4 bg-gradient-to-r from-primary to-primary-light text-white rounded-full shadow-lg text-xl font-bold
                         transform duration-200 transition-all focus-visible:outline-black focus:outline-none focus:shadow-none hover:scale-105 focus:scale-95"
                     >
                       投票する
@@ -123,7 +123,7 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
                   </Link>
                 ) : (
                   <button
-                    className="px-16 py-4 my-4 bg-gradient-to-r from-primary to-primary-light text-white rounded-full shadow-lg text-xl
+                      className="px-16 py-4 my-4 bg-gradient-to-r from-primary to-primary-light text-white rounded-full shadow-lg text-xl font-bold
                       transform duration-200 transition-all focus-visible:outline-black focus:outline-none focus:shadow-none hover:scale-105 focus:scale-95"
                     onClick={() => setNominateDialogOpen(true)}
                   >
