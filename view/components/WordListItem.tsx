@@ -51,7 +51,7 @@ const WordListItem: React.FC<Props> = ({ word, className = "" }) => {
               }
               {/* <Image onClick={handleOpenMemberDialog(member)} className="rounded-full" src="/monster01.png" width={50} height={50} /> */}
             </div>
-            <blockquote className="text-lg sm:text-2xl break-words px-1 font-extrabold text-black" style={{ wordBreak: "break-all" }}>
+            <blockquote className="text-lg sm:text-2xl break-words px-1 font-extrabold text-gray-700" style={{ wordBreak: "break-all" }}>
               {word.content}
             </blockquote>
             <button
