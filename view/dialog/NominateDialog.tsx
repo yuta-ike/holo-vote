@@ -38,7 +38,7 @@ const NominateDialog: React.FC<Props> = ({ open, onClose }) => {
   const handleCompleteDialogClose = async () => {
     setMemberDialogOpen(false)
     setCompleteDialogOpen(false)
-    await router.push(`/word/${wordId.current}`)
+    // await router.push(`/word/${wordId.current}`)
     onClose()
   }
 
