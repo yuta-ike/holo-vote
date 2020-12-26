@@ -18,6 +18,23 @@ const PRIMARY_COLOR = "rgb(41, 197, 252)"
 const createOgp = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   const { db } = initAdminFirebase()
   const snapshot = await db().collection("words").doc(req.query.wordId.toString()).get()
+
+  if(!snapshot.exists){
+    const canvas = createCanvas(WIDTH, HEIGHT)
+    const ctx = canvas.getContext("2d")
+    const buffer = canvas.toBuffer()
+    res.writeHead(200, {
+      'Cache-Control': 'public, max-age=315360000, s_maxage=315360000',
+      Expires: new Date(Date.now() + 315360000000).toUTCString(),
+      'Content-Type': 'image/png',
+      'Content-Length': buffer.length,
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+    })
+    res.end(buffer, 'binary')
+    return
+  }
+
   const data = snapshot.data()
   const word: Omit<Word, "comments" | "videos" | "createdAt"> = {
     id: snapshot.id,

@@ -22,7 +22,7 @@ const Header: React.FC<Props> = ({ onClickNominate, onClickVote }) => {
   const [sortProps, setSortProps] = useSortProps()
   
   const handleScroll = throttle(() => {
-    setScroll(window.scrollY)
+    setScroll(window.scrollY) //TODO: ここ指定域を超えているかだけでいい
   }, 100)
 
   useEffect(() => {
