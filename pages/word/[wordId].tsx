@@ -418,7 +418,7 @@ export const getStaticPaths: GetStaticPaths<ParsedUrlQuery> = async () => {
   const { db } = initAdminFirebase()
   const snapshots = await db().collection("words").get()
   return {
-    paths: snapshots.docs.map(snapshot => snapshot.id).map(wordId => ({ params: { wordId } })),
+    paths: snapshots.docs.filter(snapshot => snapshot.exists && snapshot.data().valid).map(snapshot => snapshot.id).map(wordId => ({ params: { wordId } })),
     fallback: true,
   }
 }
