@@ -21,7 +21,7 @@ const MessageDialog: React.FC<Props> = ({open, onClose}) => {
     >
       <div className="p-8">
         <h1 className="mb-2 text-center">ノミネートが完了しました！</h1>
-        <p className="mb-8 text-center text-sm">一覧ページへの反映は最大5分程度かかります</p>
+        <p className="mb-8 text-center text-sm">運営の承認後に反映されます</p>
         <div className="text-8xl w-80">
           <GiPartyPopper className="mx-auto"/>
         </div>
