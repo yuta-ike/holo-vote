@@ -222,7 +222,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   try{
     const { db } = initAdminFirebase()
     const snapshots = await db().collection("words").orderBy("createdAt").get()
-    const originalWords = snapshots.docs.map<any>(snapshot => ({ ...snapshot.data(), id: snapshot.id }))
+    const originalWords = snapshots.docs.filter(snapshot => snapshot.exists && snapshot.data().valid).map<any>(snapshot => ({ ...snapshot.data(), id: snapshot.id }))
     const words: Omit<SerializedWord, "comments">[] = originalWords.filter(data => data.redirectId == null).map<Omit<SerializedWord, "comments">>((data) => ({
       id: data.id,
       content: data.content,

@@ -428,7 +428,7 @@ export const getStaticProps: GetStaticProps<Props, ParsedUrlQuery> = async ({ pa
     const { db } = initAdminFirebase()
     const snapshot = await db().collection("words").doc(wordId).get()
     const wordData = snapshot.data()
-    if(wordData.memberIds == null) console.log(wordData)
+    if(!wordData.valid) throw new Error()
     const word: Props["word"] = {
       id: wordId,
       content: wordData.content,

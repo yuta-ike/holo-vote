@@ -17,6 +17,8 @@ type Props = {
   onClose: () => void
 }
 
+const isAllCheckMode = process.env.NEXT_PUBLIC_CHECK_MODE === "ALL_CHECK"
+
 const NominateDialog: React.FC<Props> = ({ open, onClose }) => {
   const router = useRouter()
   const [memberDialogOpen, setMemberDialogOpen] = useState(false)
@@ -49,7 +51,7 @@ const NominateDialog: React.FC<Props> = ({ open, onClose }) => {
       memberIds,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      valid: true,
+      valid: isAllCheckMode ? false : true,
       videos: [],
       createdBy: auth.currentUser.uid
     })
