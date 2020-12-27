@@ -232,7 +232,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     }))
     return {
       props: { words, nominateNum: originalWords.length },
-      revalidate: 5 * 60,
+      revalidate: 60 * 60,
     }
   }catch{
     return {
