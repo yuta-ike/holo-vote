@@ -45,8 +45,11 @@ type ParsedUrlQuery = {
 const FIX_COMMENTS = ["いいね！", "これは草", "大草原", "！？！？"]
 
 const WordPage: React.FC<Props> = ({ word: _word }) => {
-  const [word, setWord] = useState<Pick<Word, "id" | "content" | "members" | "videos" | "comments">>({..._word, comments: _word.comments.map(comment => ({ ...comment, createdAt: DateTime.fromISO(comment.createdAt) }))})
   const router = useRouter()
+  if(_word == null){
+    return null
+  }
+  const [word, setWord] = useState<Pick<Word, "id" | "content" | "members" | "videos" | "comments">>({..._word, comments: _word.comments.map(comment => ({ ...comment, createdAt: DateTime.fromISO(comment.createdAt) }))})
   const [nominateDialogOpen, setNominateDialogOpen] = useState(false)
   const [selectedMember, setSelectedMember] = useState<null | Member>(null)
   const [voteDialogOpen, setVoteDialogOpen] = useState(false)
@@ -339,7 +342,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
                           title="いいね"
                         >
                           <MdThumbUp className="mr-1"/>
-                          <span className="text-sm">{(comment.like.length - (comment.like.includes(user.uid) ? 1 : 0)) + (likedIds.includes(comment.id) ? 1 : 0)}</span>
+                          <span className="text-sm">{user == null ? 0 : (comment.like.length - (comment.like.includes(user.uid) ? 1 : 0)) + (likedIds.includes(comment.id) ? 1 : 0)}</span>
                         </button>
                       </div>
                     </section>
@@ -392,6 +395,8 @@ const getWordData = async (wordId: string, db: typeof firestore) => {
     return getWordData(wordData.redirectId, db)
   }
 
+  // if(commentData.length > 0) console.log(commentData, wordId)
+
   const word: Omit<SerializedWord, "createdAt"> = {
     id: wordSnapshot.id,
     content: wordData.content,
@@ -400,7 +405,7 @@ const getWordData = async (wordId: string, db: typeof firestore) => {
     comments: commentData.map<SerializedComment>((data, i) => ({
       id: data.id,
       serialNumber: i + 1,
-      createdAt: DateTime.fromJSDate(data.createdAt.toDate() as Date).toISO(),
+      createdAt: DateTime.fromJSDate(data.createdAt.toDate()).toISO(),
       content: data.content,
       like: data.like,
     })).reverse(),
@@ -430,8 +435,14 @@ export const getStaticProps: GetStaticProps<Props, ParsedUrlQuery> = async ({ pa
     //   videos: wordData.videos,
     // }
     const word = await getWordData(wordId, db)
+
+    if(word == null){
+      console.log(wordId, "NULL")
+    }
+
     return { props: { word } }
   }catch(e){
+    console.log(wordId, "ERRORRRR")
     return {
       redirect: {
         permanent: false,
