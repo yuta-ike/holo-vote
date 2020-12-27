@@ -6,7 +6,7 @@ import axios from 'axios'
 import Header from '../../view/components/Header'
 import NominateDialog from '../../view/dialog/NominateDialog'
 import Word from '../../types/word'
-import Comment from '../../types/comment'
+import Comment, { SerializedComment } from '../../types/comment'
 import { members } from '../../data/members'
 import { AiOutlineLoading3Quarters, AiOutlineTwitter } from 'react-icons/ai'
 import TextField from '@material-ui/core/TextField'
@@ -28,9 +28,14 @@ import Footer from '../../view/components/Footer'
 import ReportDialog from '../../view/dialog/ReportDialog'
 import { useGlobalStates } from '../../utils/context/GlobalStatesProvider'
 import outLink from '../../utils/ga/outLink'
+import { firestore } from 'firebase-admin'
+
+type SerializedWord = Pick<Word, "id" | "content" | "members" | "videos"> & {
+  comments: SerializedComment[]
+}
 
 type Props = {
-  word: Pick<Word, "id" | "content" | "members" | "videos">
+  word: SerializedWord
 }
 
 type ParsedUrlQuery = {
@@ -40,7 +45,7 @@ type ParsedUrlQuery = {
 const FIX_COMMENTS = ["いいね！", "これは草", "大草原", "！？！？"]
 
 const WordPage: React.FC<Props> = ({ word: _word }) => {
-  const [word, setWord] = useState<Omit<Word, "createdAt">>({..._word, comments: []})
+  const [word, setWord] = useState<Pick<Word, "id" | "content" | "members" | "videos" | "comments">>({..._word, comments: _word.comments.map(comment => ({ ...comment, createdAt: DateTime.fromISO(comment.createdAt) }))})
   const router = useRouter()
   const [nominateDialogOpen, setNominateDialogOpen] = useState(false)
   const [selectedMember, setSelectedMember] = useState<null | Member>(null)
@@ -50,53 +55,42 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
   const [reportDialogOpen, setReportDialogOpen] = useState(false)
   const [likedIds, setLikedIds] = useState<string[]>([])
   const [comment, setComment] = useState("")
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [isSending, setIsSending] = useState(false)
   const { globalStates: { user } } = useGlobalStates()
   const ref = useRef(null)
 
   const disabled = comment.length === 0 || isSending
 
-  useEffect(() => {
-    ;(async () => {
-      const { db } = initFirebase()
-      const [wordSnapshot, commentSnapshots] = await Promise.all([
-        db.collection("words").doc(word.id).get(),
-        db.collection("words").doc(word.id).collection("comments").get(),
-      ])
-      const wordData = wordSnapshot.data()
+  // useEffect(() => {
+  //   ;(async () => {
+  //     const { db } = initFirebase()
+  //     const [wordSnapshot, commentSnapshots] = await Promise.all([
+  //       db.collection("words").doc(word.id).get(),
+  //       db.collection("words").doc(word.id).collection("comments").get(),
+  //     ])
+  //     const wordData = wordSnapshot.data()
       
-      setWord(prev => ({
-        ...prev,
-        content: wordData.content,
-        members: wordData.memberIds.map((id: number) => members[id - 1]),
-        videos: wordData.videos,
-        comments: commentSnapshots.docs.map<Comment>((snapshot, i) => ({
-          id: snapshot.id,
-          serialNumber: i + 1,
-          createdAt: DateTime.fromJSDate(snapshot.data().createdAt.toDate()),
-          content: snapshot.data().content,
-          like: snapshot.data().like,
-        })).reverse(),
-      }))
-      setIsLoading(false)
-    })()
-  }, [])
+  //     setWord(prev => ({
+  //       ...prev,
+  //       content: wordData.content,
+  //       members: wordData.memberIds.map((id: number) => members[id - 1]),
+  //       videos: wordData.videos,
+  //       comments: commentSnapshots.docs.map<Comment>((snapshot, i) => ({
+  //         id: snapshot.id,
+  //         serialNumber: i + 1,
+  //         createdAt: DateTime.fromJSDate(snapshot.data().createdAt.toDate()),
+  //         content: snapshot.data().content,
+  //         like: snapshot.data().like,
+  //       })).reverse(),
+  //     }))
+  //     setIsLoading(false)
+  //   })()
+  // }, [])
 
   useEffect(() => {
     if(user != null) setLikedIds(word.comments.filter(comment => comment.like.includes(user.uid)).map(comment => comment.id))
   }, [user])
-
-  // const uid = useRef<string>()
-  // useEffect(() => {
-  //   const { auth } = initFirebase()
-
-  //   auth.onAuthStateChanged((user) => {
-  //     if(user == null) return
-  //     uid.current = user.uid
-  //     setLikedIds(word.comments.filter(comment => comment.like.includes(uid.current)).map(comment => comment.id))
-  //   })
-  // }, [word.comments])
 
   const handleQuickSend = (comment: string) => () => {
     sendComment(comment)
@@ -383,36 +377,36 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
   )
 }
 
-// const getWordData = async (wordId: string, db: typeof firestore) => {
-//   const [wordSnapshot, commentSnapshots] = await Promise.all([
-//     db().collection("words").doc(wordId).get(),
-//     db().collection("words").doc(wordId).collection("comments").orderBy('createdAt').get(),
-//   ])
+const getWordData = async (wordId: string, db: typeof firestore) => {
+  const [wordSnapshot, commentSnapshots] = await Promise.all([
+    db().collection("words").doc(wordId).get(),
+    db().collection("words").doc(wordId).collection("comments").orderBy('createdAt').get(),
+  ])
 
-//   const wordData = wordSnapshot.data()
-//   const commentData = commentSnapshots.docs.map((snapshot) => ({ ...snapshot.data(), id: snapshot.id })) as any[]
+  const wordData = wordSnapshot.data()
+  const commentData = commentSnapshots.docs.map((snapshot) => ({ ...snapshot.data(), id: snapshot.id })) as any[]
 
-//   if (wordData == null) throw Error()
+  if (wordData == null) throw Error()
 
-//   if(wordData.redirectId != null){
-//     return getWordData(wordData.redirectId, db)
-//   }
+  if(wordData.redirectId != null){
+    return getWordData(wordData.redirectId, db)
+  }
 
-//   const word: Omit<SerializedWord, "createdAt"> = {
-//     id: wordSnapshot.id,
-//     content: wordData.content,
-//     members: wordData.memberIds.map((id: number) => members[id - 1]),
-//     videos: wordData.videos,
-//     comments: commentData.map<SerializedComment>((data, i) => ({
-//       id: data.id,
-//       serialNumber: i + 1,
-//       createdAt: DateTime.fromJSDate(data.createdAt.toDate() as Date).toISO(),
-//       content: data.content,
-//       like: data.like,
-//     })).reverse(),
-//   }
-//   return word
-// }
+  const word: Omit<SerializedWord, "createdAt"> = {
+    id: wordSnapshot.id,
+    content: wordData.content,
+    members: wordData.memberIds.map((id: number) => members[id - 1]),
+    videos: wordData.videos,
+    comments: commentData.map<SerializedComment>((data, i) => ({
+      id: data.id,
+      serialNumber: i + 1,
+      createdAt: DateTime.fromJSDate(data.createdAt.toDate() as Date).toISO(),
+      content: data.content,
+      like: data.like,
+    })).reverse(),
+  }
+  return word
+}
 
 export const getStaticPaths: GetStaticPaths<ParsedUrlQuery> = async () => {
   const { db } = initAdminFirebase()
@@ -426,15 +420,16 @@ export const getStaticPaths: GetStaticPaths<ParsedUrlQuery> = async () => {
 export const getStaticProps: GetStaticProps<Props, ParsedUrlQuery> = async ({ params: { wordId } }) => {
   try{
     const { db } = initAdminFirebase()
-    const snapshot = await db().collection("words").doc(wordId).get()
-    const wordData = snapshot.data()
-    if(!wordData.valid) throw new Error()
-    const word: Props["word"] = {
-      id: wordId,
-      content: wordData.content,
-      members: wordData.memberIds.map((id: number) => members[id - 1]),
-      videos: wordData.videos,
-    }
+    // const wordSnapshot = await db().collection("words").doc(wordId).get()
+    // const wordData = wordSnapshot.data()
+    // if(!wordData.valid) throw new Error()
+    // const word: Props["word"] = {
+    //   id: wordId,
+    //   content: wordData.content,
+    //   members: wordData.memberIds.map((id: number) => members[id - 1]),
+    //   videos: wordData.videos,
+    // }
+    const word = await getWordData(wordId, db)
     return { props: { word } }
   }catch(e){
     return {
