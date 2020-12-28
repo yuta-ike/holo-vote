@@ -186,7 +186,7 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // try{
     const { db } = initAdminFirebase()
-    const orderBy: [string, "asc" | "desc"] = process.env.NEXT_PUBLIC_VOTE_START === "START" ? ["nominateNo", "desc"] : ["createdAt", "asc"]
+    const orderBy: [string, "asc" | "desc"] = process.env.NEXT_PUBLIC_VOTE_START === "START" ? ["nominateNo", "asc"] : ["createdAt", "desc"]
     const snapshots = await db().collection("words").orderBy(...orderBy).get()
     const wordData = snapshots.docs.filter(snapshot => snapshot.exists && snapshot.data().valid && snapshot.data().redirectId == null).map<any>(snapshot => ({ ...snapshot.data(), id: snapshot.id }))
     const words: Omit<SerializedWord, "comments">[] = wordData.map<Omit<SerializedWord, "comments">>((data) => ({
