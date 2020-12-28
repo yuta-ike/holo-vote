@@ -55,8 +55,8 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
     const filterIds = sortProps.filter?.map(member => member.id)
     const filtered = sortProps.filter == null ? words : words.filter(word => word.members.reduce((acc, member) => acc || filterIds.includes(member.id), false))
     const sorted = sortProps.sort
-      ? [...filtered.sort((a, b) => a.nominateNo < b.nominateNo ? 1 : a.nominateNo === b.nominateNo ? 0 : -1)]
-      : [...filtered.sort((a, b) => a.nominateNo < b.nominateNo ? -1 : a.nominateNo === b.nominateNo ? 0 : 1)]
+      ? [...filtered.sort((a, b) => a.nominateNo > b.nominateNo ? 1 : a.nominateNo === b.nominateNo ? 0 : -1)]
+      : [...filtered.sort((a, b) => a.nominateNo > b.nominateNo ? -1 : a.nominateNo === b.nominateNo ? 0 : 1)]
     setListWords(sorted)
   }, [sortProps.sort, sortProps.filter])
 
