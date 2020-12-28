@@ -135,7 +135,7 @@ const NominateDialog: React.FC<Props> = ({ open, onClose }) => {
         </DialogContent>
       </Dialog>
       <MemberSelectDialog open={memberDialogOpen} onClose={handleMemberDialogClose} init={memberIds}/>
-      <MessageDialog open={completeDialogOpen} onClose={handleCompleteDialogClose}/>
+      <MessageDialog open={completeDialogOpen} onClose={handleCompleteDialogClose} body="ノミネートが完了しました！" note="運営の承認後に反映されます"/>
     </>
   )
 }

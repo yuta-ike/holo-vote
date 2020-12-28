@@ -42,6 +42,7 @@ const VideoAddDialog: React.FC<Props> = ({open, onClose}) => {
     >
       <div className="p-8 w-96 max-w-full">
         <h1 className="mb-8">関連動画登録</h1>
+        <p className="text-sm text-gray-500">他のユーザーの画面に反映されるまで、最大で1時間程度かかります。</p>
         <div className="flex w-full justify-between my-8">
           <TextField
             value={text}

@@ -18,7 +18,7 @@ const getRandomImage = (): string => MESSAGES[Math.floor((Math.random() * MESSAG
 
 const App: React.FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
-  const [globalStates, setGlobalStates] = useState<GlobalState>({ user: null, todayVotes: 0, nominateEnd: false, voteStart: false, initialized: false, description: defaultDescription, topMessage: {}, footerMessage: {}, voteStartDate: "" })
+  const [globalStates, setGlobalStates] = useState<GlobalState>({ user: null, todayVotes: 0, nominateEnd: true, voteStart: true, initialized: false, description: defaultDescription, topMessage: {}, footerMessage: {}, voteStartDate: "", errorMessage: "" })
   useEffect(() => {
     const { auth, db, remoteConfig } = initFirebase()
 
@@ -40,6 +40,7 @@ const App: React.FC<AppProps> = ({ Component, pageProps }) => {
           description: remoteConfig.getString("description"),
           topMessage,
           footerMessage,
+          errorMessage: remoteConfig.getString("ERROR_MESSAGE"),
         }))
       })
     }

@@ -10,6 +10,7 @@ type GlobalState = {
   description: string
   topMessage: Record<string, string>
   footerMessage: Record<string, string>
+  errorMessage: string
 }
 
 export default GlobalState

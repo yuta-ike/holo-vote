@@ -10,6 +10,7 @@ type Word = {
   videos: Video[]
   createdAt: DateTime
   comments: Comment[]
+  nominateNo?: number
 }
 
 export type SerializedWord = Omit<Word, "createdAt"> & {

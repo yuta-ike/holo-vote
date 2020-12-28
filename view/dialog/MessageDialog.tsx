@@ -4,11 +4,13 @@ import Transition from './transition/Transition'
 import { GiPartyPopper } from 'react-icons/gi'
 
 type Props = {
-  open: boolean,
+  open: boolean
   onClose: () => void
+  body: string
+  note: string
 }
 
-const MessageDialog: React.FC<Props> = ({open, onClose}) => {
+const MessageDialog: React.FC<Props> = ({ open, onClose, body, note }) => {
   const handleClose = () => {
     onClose()
   }
@@ -20,8 +22,8 @@ const MessageDialog: React.FC<Props> = ({open, onClose}) => {
       onClose={handleClose}
     >
       <div className="p-8">
-        <h1 className="mb-2 text-center">ノミネートが完了しました！</h1>
-        <p className="mb-8 text-center text-sm">運営の承認後に反映されます</p>
+        <h1 className="mb-2 text-center">{body}</h1>
+        <p className="mb-8 text-center text-sm">{note}</p>
         <div className="text-8xl w-80">
           <GiPartyPopper className="mx-auto"/>
         </div>

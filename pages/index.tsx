@@ -12,34 +12,29 @@ import classNames from 'classnames'
 import NameChip from '../view/components/NameChip'
 import initAdminFirebase from '../utils/auth/initAdminFirebase'
 import { unserialize } from '../types/word'
-import shuffle from '../utils/shuffle'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { useGlobalStates } from '../utils/context/GlobalStatesProvider'
 import Link from 'next/link'
 import Footer from '../view/components/Footer'
 import { useSortProps } from '../utils/context/SortPropProvider'
+import PickUpCards from '../view/components/PickUpCards'
 
 type Props = {
   words: Omit<SerializedWord, "comments">[]
   nominateNum: number
 }
 
-const PICKUP_NUM = 7
-
 const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
   const router = useRouter()
   const [words] = useState<Omit<Word, "comments">[]>(() => _words.map(unserialize))
-  const [pickup, setPickUp] = useState<Omit<Word, "comments">[]>([])
   const [listWords, setListWords] = useState<Omit<Word, "comments">[]>([])
 
   const [nominateDialogOpen, setNominateDialogOpen] = useState(false)
   const [memberSelectDialog, setMemberSelectDialogOpen] = useState(false)
 
-  const [mode, setMode] = useState<"late" | "random">("late")
   const [sortProps, setSortProps] = useSortProps()
 
-  // const [wordId, setWordId] = useState<string|null>(router.query.from?.toString())
   useEffect(() => {
     setSortProps(prev => ({ ...prev, showWordJumpButton: router.query.from != null}))
   }, [])
@@ -60,19 +55,10 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
     const filterIds = sortProps.filter?.map(member => member.id)
     const filtered = sortProps.filter == null ? words : words.filter(word => word.members.reduce((acc, member) => acc || filterIds.includes(member.id), false))
     const sorted = sortProps.sort
-      ? [...filtered.sort((a, b) => a.createdAt < b.createdAt ? 1 : a.createdAt === b.createdAt ? 0 : -1)]
-      : [...filtered.sort((a, b) => a.createdAt < b.createdAt ? -1 : a.createdAt === b.createdAt ? 0 : 1)]
+      ? [...filtered.sort((a, b) => a.nominateNo < b.nominateNo ? 1 : a.nominateNo === b.nominateNo ? 0 : -1)]
+      : [...filtered.sort((a, b) => a.nominateNo < b.nominateNo ? -1 : a.nominateNo === b.nominateNo ? 0 : 1)]
     setListWords(sorted)
   }, [sortProps.sort, sortProps.filter])
-
-  useEffect(() => {
-    if(mode === "late"){
-      setPickUp([...words.sort((a, b) => a.createdAt < b.createdAt ? 1 : a.createdAt === b.createdAt ? 0 : -1)].slice(0, PICKUP_NUM))
-    }else{
-      setPickUp(shuffle(words).slice(0, PICKUP_NUM))
-    }
-  }, [mode])
-
 
   return (
     <>
@@ -127,42 +113,21 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
                       transform duration-200 transition-all focus-visible:outline-black focus:outline-none focus:shadow-none hover:scale-105 focus:scale-95"
                     onClick={() => setNominateDialogOpen(true)}
                   >
-                    {initialized ? "ノミネートする" : "ノミネートする" /* 初期値 */}
+                    {initialized ? "ノミネートする" : "投票する" /* 初期値 */}
                   </button>
                 )
               }
             </section>
 
-            <section className="w-full mt-8">
-              <h1 className="text-lg mb-4 mx-2">ピックアップ</h1>
-              <button
-                className={classNames(mode === "late" ? "text-black font-bold underline" : "text-gray-400",
-                  "transition-all text-md mx-2 focus-visible:outline-black focus:outline-none")}
-                onClick={() => setMode("late")}
-              >
-                最新
-              </button>
-              <button
-                className={classNames(mode === "random" ? "text-black font-bold underline" : "text-gray-400",
-                    "transition-all text-md mx-2 focus-visible:outline-black focus:outline-none")}
-                onClick={() => setMode("random")}
-              >
-                ランダム
-              </button>
-              <div className="-ml-4 -mr-4 p-2 overflow-x-scroll overscroll-x-contain flex flex-row flex-nowrap whitespace-nowrap">
-                {pickup.map(item => (
-                  <WordCard key={item.id} word={item}/>
-                ))}
-                <div className="pl-2"/>
-              </div>
-            </section>
-            <div className="mb-16" />
+            <PickUpCards words={words}/>
+
+            {/* <div className="mb-16" /> */}
             <article className="self-start w-full my-8">
               <h1 className="text-lg mb-4" id="vote-anchor">ノミネート一覧</h1>
               <div className="flex flex-row text-sm mt-4 mb-2 border-gray-200 border-b w-full overflow-hidden overflow-x-scroll overscroll-x-contain sm:overflow-x-auto">
                 <button className={classNames("flex flex-row flex-shrink-0 items-center mr-2 px-2 focus-visible:outline-black focus:outline-none", !sortProps.sort && "mr-3")} onClick={() => setSortProps(prev => ({...prev, sort: !prev.sort}))}>
-                  <MdArrowDownward className={classNames("transform transition-all", !sortProps.sort && "rotate-180")}/>
-                  { sortProps.sort ? "新しい順" : "古い順" }
+                  {/* <MdArrowDownward className={classNames("transform transition-all", !sortProps.sort && "rotate-180")}/> */}
+                  { sortProps.sort ? "あ→ん" : "ん→あ" }
                 </button>
                 <button className="px-2 focus-visible:outline-black focus:outline-none flex items-center min-w-0" onClick={() => setMemberSelectDialogOpen(true)}>
                   <span className="flex-0 flex-shrink-0">フィルター：</span>
@@ -219,29 +184,32 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  try{
+  // try{
     const { db } = initAdminFirebase()
-    const snapshots = await db().collection("words").orderBy("createdAt").get()
-    const originalWords = snapshots.docs.filter(snapshot => snapshot.exists && snapshot.data().valid).map<any>(snapshot => ({ ...snapshot.data(), id: snapshot.id }))
-    const words: Omit<SerializedWord, "comments">[] = originalWords.filter(data => data.redirectId == null).map<Omit<SerializedWord, "comments">>((data) => ({
+    const orderBy = process.env.NEXT_PUBLIC_VOTE_START === "START" ? "nominateNo" : "createdAt"
+    const snapshots = await db().collection("words").orderBy(orderBy).get()
+    const wordData = snapshots.docs.filter(snapshot => snapshot.exists && snapshot.data().valid && snapshot.data().redirectId == null).map<any>(snapshot => ({ ...snapshot.data(), id: snapshot.id }))
+    const words: Omit<SerializedWord, "comments">[] = wordData.map<Omit<SerializedWord, "comments">>((data) => ({
       id: data.id,
       content: data.content,
       members: data.memberIds.map(id => members[id - 1]),
       videos: data.videos,
-      createdAt: (data.createdAt.toDate() as Date).toISOString()
+      createdAt: (data.createdAt.toDate() as Date).toISOString(),
+      nominateNo: data.nominateNo ?? null,
     }))
+    // const votes = await Promise.all(wordData.map(word => word.id).map(wordId => db().collection("words").doc(wordId).collection("votes").get()))
     return {
-      props: { words, nominateNum: originalWords.length },
-      revalidate: 60 * 60,
+      props: { words, nominateNum: wordData.length },
+      revalidate: 60 * 60, // 1h
     }
-  }catch{
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/404',
-      }
-    }
-  }
+  // }catch{
+  //   return {
+  //     redirect: {
+  //       permanent: false,
+  //       destination: '/404',
+  //     }
+  //   }
+  // }
 }
 
 export default Index

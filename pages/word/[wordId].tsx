@@ -29,6 +29,7 @@ import ReportDialog from '../../view/dialog/ReportDialog'
 import { useGlobalStates } from '../../utils/context/GlobalStatesProvider'
 import outLink from '../../utils/ga/outLink'
 import { firestore } from 'firebase-admin'
+import NotFoundError from '../../error/NotFoundError'
 
 type SerializedWord = Pick<Word, "id" | "content" | "members" | "videos"> & {
   comments: SerializedComment[]
@@ -159,7 +160,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
   }
 
   const handleVideoAdd = async (videoId: string | null) => {
-    if(videoId == null){
+    if(videoId == null || (word.videos.find(video => video.videoId === videoId) != null)){
       setVideoDialogOpen(false)
       return
     }
@@ -304,7 +305,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
                   投稿
                 </button>
               </div>
-              <div className="mb-6 py-2 flex flex-row items-center flex-nowrap overflow-x-scroll overscroll-x-contain whitespace-nowrap">
+              <div className="mb-6 pt-2 flex flex-row items-center flex-nowrap overflow-x-scroll overscroll-x-contain whitespace-nowrap">
                 <p className="text-sm mr-2">
                   ワンタップで投稿
                 </p>
@@ -320,6 +321,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
                   ))
                 }
               </div>
+              <p className="text-sm text-gray-500">他のユーザーの画面に反映されるまで、最大で1時間程度かかります。</p>
               <section>
                 {
                   word.comments.filter(comment => comment.content !== "").map((comment, i) => (
@@ -386,16 +388,15 @@ const getWordData = async (wordId: string, db: typeof firestore) => {
     db().collection("words").doc(wordId).collection("comments").orderBy('createdAt').get(),
   ])
 
+  if(!wordSnapshot.exists) throw new NotFoundError()
+
   const wordData = wordSnapshot.data()
   const commentData = commentSnapshots.docs.map((snapshot) => ({ ...snapshot.data(), id: snapshot.id })) as any[]
 
-  if (wordData == null) throw Error()
-
   if(wordData.redirectId != null){
-    return getWordData(wordData.redirectId, db)
+    const redirectId: string = wordData.redirectId
+    return redirectId
   }
-
-  // if(commentData.length > 0) console.log(commentData, wordId)
 
   const word: Omit<SerializedWord, "createdAt"> = {
     id: wordSnapshot.id,
@@ -425,29 +426,27 @@ export const getStaticPaths: GetStaticPaths<ParsedUrlQuery> = async () => {
 export const getStaticProps: GetStaticProps<Props, ParsedUrlQuery> = async ({ params: { wordId } }) => {
   try{
     const { db } = initAdminFirebase()
-    // const wordSnapshot = await db().collection("words").doc(wordId).get()
-    // const wordData = wordSnapshot.data()
-    // if(!wordData.valid) throw new Error()
-    // const word: Props["word"] = {
-    //   id: wordId,
-    //   content: wordData.content,
-    //   members: wordData.memberIds.map((id: number) => members[id - 1]),
-    //   videos: wordData.videos,
-    // }
     const word = await getWordData(wordId, db)
-
-    if(word == null){
-      console.log(wordId, "NULL")
-    }
-
-    return { props: { word } }
-  }catch(e){
-    console.log(wordId, "ERRORRRR")
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/404',
+    if(typeof word !== "string"){
+      return { props: { word } }
+    }else{
+      return {
+        redirect: {
+          permanent: true,
+          destination: `/word/${word}`
+        }
       }
+    }
+  }catch(e){
+    if (e instanceof NotFoundError){
+      return {
+        redirect: {
+          permanent: false,
+          destination: '/404',
+        }
+      }
+    }else{
+      throw new Error()
     }
   }
 }
