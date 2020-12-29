@@ -28,7 +28,7 @@ const PickUpCards: React.FC<Props> = ({ words }) => {
     <section className="w-full my-8">
       <h1 className="text-lg mb-2 mx-2">ピックアップ</h1>
       {
-        voteStart && (
+        !voteStart && (
           <>
             <button
               className={classNames(mode === "late" ? "text-black font-bold underline" : "text-gray-400",

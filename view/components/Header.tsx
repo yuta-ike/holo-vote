@@ -108,7 +108,9 @@ const Header: React.FC<Props> = ({ onClickNominate, onClickVote }) => {
         ) : !initialized ? (
           null
         ) : nominateEnd ? (
-          onClickVote == null ? (
+          router.asPath.split("#")[0] === "/" ? (
+            null
+          ) : onClickVote == null ? (
             <Link href={router.asPath.split("#")[0] + "#vote-anchor"}>
               <a
                 className={`fixed bottom-16 px-8 py-3 bg-gradient-to-r from-primary to-primary-light text-white rounded-full shadow-2xl text-lg z-50

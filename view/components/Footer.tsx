@@ -14,8 +14,8 @@ const Footer = () => {
           initialized && (isSp && open || !isSp) &&
           Object.entries(footerMessage).map(([key, value]) => (
             <dl key={key} className="mt-2">
-              <dt>{key}</dt>
-              <dd className="pl-4">{
+              <dt className="font-bold">{key}</dt>
+              <dd>{
                 value.split(/%TWITTER_ACCOUNT%/).map((str, i) => (
                   <Fragment key={i}>
                     {i !== 0 && <a className="underline text-blue-500" href="https://twitter.com/holovote">@holovote</a>}

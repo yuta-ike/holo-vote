@@ -19,6 +19,8 @@ import Link from 'next/link'
 import Footer from '../view/components/Footer'
 import { useSortProps } from '../utils/context/SortPropProvider'
 import PickUpCards from '../view/components/PickUpCards'
+import { DateTime } from 'luxon'
+import { FaListUl, FaThList } from 'react-icons/fa'
 
 type Props = {
   words: Omit<SerializedWord, "comments">[]
@@ -49,6 +51,11 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
 
   const handleNominateDialogClose = () => {
     setNominateDialogOpen(false)
+  }
+
+  const handleModeChange = () => {
+    const nextMode = sortProps.mode === "list" ? "simple" : "list"
+    setSortProps(prev => ({ ...prev, mode: nextMode }))
   }
   
   useEffect(() => {
@@ -81,6 +88,9 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
           <div className="relative w-full flex flex-col items-center px-4 py-8 bg-white min-h-screen round-2 sm:shadow-lg">
             <dl className="sm:mx-2 p-2 sm:p-4 bg-gray-50 text-black w-full flex flex-row">
               {
+                !initialized && <div className="h-12"/>
+              }
+              {
                 Object.entries(topMessage).map(([key, message]) => (
                   <div key={key} className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-center text-center">
                     <dt className="inline-block text-sm">{key}</dt>
@@ -93,7 +103,7 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
             </dl>
 
             <section className="mx-2 my-4 sm:my-8 p-4 border-solid border-primary border-2 w-full text-sm">
-              {description}
+              {!initialized ? "ホロライブファンの投票でホロライブの流行語大賞を決めよう！という企画です✨✨投票は1日5回まで、同じワードへの複数投票可です！ぜひご参加ください🎉" : description}
             </section>
             <section className="my-16">
               <p className="text-center">あなたの思う「流行語」はなに？</p>
@@ -121,18 +131,38 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
 
             <PickUpCards words={words}/>
 
-            {/* <div className="mb-16" /> */}
             <article className="self-start w-full my-8">
               <h1 className="text-lg mb-4" id="vote-anchor">ノミネート一覧</h1>
-              <div className="flex flex-row text-sm mt-4 mb-2 border-gray-200 border-b w-full overflow-hidden overflow-x-scroll overscroll-x-contain sm:overflow-x-auto">
-                <button className={classNames("flex flex-row flex-shrink-0 items-center mr-2 px-2 focus-visible:outline-black focus:outline-none", !sortProps.sort && "mr-3")} onClick={() => setSortProps(prev => ({...prev, sort: !prev.sort}))}>
+              <div className="flex flex-row text-md mt-4 mb-2 border-gray-200 border-b w-full overflow-hidden overflow-x-scroll overscroll-x-contain sm:overflow-x-auto">
+                <button className={classNames("flex flex-row flex-shrink-0 items-center mr-4 px-2 focus-visible:outline-black focus:outline-none", !sortProps.sort && "mr-3")} onClick={() => setSortProps(prev => ({...prev, sort: !prev.sort}))}>
                   {/* <MdArrowDownward className={classNames("transform transition-all", !sortProps.sort && "rotate-180")}/> */}
-                  { sortProps.sort ? "あ→ん" : "ん→あ" }
+                  {
+                    sortProps.sort ? (
+                      <><span className="text-xl font-bold">あ</span>→<span className="text-sm font-bold">ん</span></>
+                    ) : (
+                      <><span className="text-xl font-bold">ん</span>→<span className="text-sm font-bold">あ</span></>
+                    )
+                  }
+                </button>
+                <button className="flex flex-row flex-shrink-0 items-center mr-4" onClick={handleModeChange}>
+                  {
+                    sortProps.mode === "list" ? (
+                      <>
+                        <FaThList/>
+                        <span className="ml-1">リスト　</span>
+                      </>
+                    ) : (
+                      <>
+                        <FaListUl />
+                        <span className="ml-1">シンプル</span>
+                      </>
+                    )
+                  }
                 </button>
                 <button className="px-2 focus-visible:outline-black focus:outline-none flex items-center min-w-0" onClick={() => setMemberSelectDialogOpen(true)}>
                   <span className="flex-0 flex-shrink-0">フィルター：</span>
                   {
-                    sortProps.filter.length === members.length ? "全員" : (
+                    sortProps.filter.length === members.length ? <span className="py-2 px-5 my-1 bg-primary-light rounded-full text-white">全員</span> : (
                       <div
                         className="scroll-wrapper flex flex-row flex-nowrap items-center my-2 whitespace-nowrap px-2 cursor-pointer sm:overflow-x-scroll sm:overscroll-x-contain"
                       >
@@ -143,7 +173,7 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
                 </button>
               </div>
               {listWords.map((item) => (
-                <WordListItem key={item.id} word={item}/>
+                <WordListItem key={item.id} word={item} mode={sortProps.mode}/>
               ))}
               {
                 listWords.length === 0 && (
@@ -184,32 +214,45 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  // try{
-    const { db } = initAdminFirebase()
-    const orderBy: [string, "asc" | "desc"] = process.env.NEXT_PUBLIC_VOTE_START === "START" ? ["nominateNo", "asc"] : ["createdAt", "desc"]
-    const snapshots = await db().collection("words").orderBy(...orderBy).get()
-    const wordData = snapshots.docs.filter(snapshot => snapshot.exists && snapshot.data().valid && snapshot.data().redirectId == null).map<any>(snapshot => ({ ...snapshot.data(), id: snapshot.id }))
-    const words: Omit<SerializedWord, "comments">[] = wordData.map<Omit<SerializedWord, "comments">>((data) => ({
-      id: data.id,
-      content: data.content,
-      members: data.memberIds.map(id => members[id - 1]),
-      videos: data.videos,
-      createdAt: (data.createdAt.toDate() as Date).toISOString(),
-      nominateNo: data.nominateNo ?? null,
-    }))
-    // const votes = await Promise.all(wordData.map(word => word.id).map(wordId => db().collection("words").doc(wordId).collection("votes").get()))
-    return {
-      props: { words, nominateNum: wordData.length },
-      revalidate: 60 * 60, // 1h
-    }
-  // }catch{
-  //   return {
-  //     redirect: {
-  //       permanent: false,
-  //       destination: '/404',
-  //     }
-  //   }
+  const { db } = initAdminFirebase()
+  const orderBy: [string, "asc" | "desc"] = process.env.NEXT_PUBLIC_VOTE_START === "START" ? ["nominateNo", "asc"] : ["createdAt", "desc"]
+  const snapshots = await db().collection("words").orderBy(...orderBy).get()
+  const wordData = snapshots.docs.filter(snapshot => snapshot.exists && snapshot.data().valid && snapshot.data().redirectId == null).map<any>(snapshot => ({ ...snapshot.data(), id: snapshot.id }))
+  const words: Omit<SerializedWord, "comments">[] = wordData.map<Omit<SerializedWord, "comments">>((data) => ({
+    id: data.id,
+    content: data.content,
+    members: data.memberIds.map(id => members[id - 1]),
+    videos: data.videos,
+    createdAt: (data.createdAt.toDate() as Date).toISOString(),
+    nominateNo: data.nominateNo ?? null,
+  }))
+  return {
+    props: { words, nominateNum: wordData.length },
+    revalidate: 60 * 60, // 1h
+  }
+
+  // const words: Omit<SerializedWord, "comments">[] = Array(10).fill(null).map((_, i) => ({
+  //   id: "test-id-" + i,
+  //   content: i === 0 ? "あぁいほぉうぃ〜…とうぎゃざ〜えば〜。グッドラック！！" : i === 1 ? "アピールして下さい" : "テストワード" + i,
+  //   members: [members[i]],
+  //   videos: [],
+  //   createdAt: DateTime.local().toISO(),
+  //   nominateNo: 500 + i,
+  // }))
+
+  // const word = {
+  //   id: "YfNLvwpzMHArzXa7l3t7",
+  //   content: "へい！むな！",
+  //   members: [members[21 - 1], members[33 - 1], members[0]],
+  //   videos: [],
+  //   createdAt: DateTime.local().toISO(),
+  //   nominateNo: 170,
   // }
+
+  return {
+    props: { words: [...words, word], nominateNum: words.length },
+    revalidate: 60 * 60, // 1h
+  }
 }
 
 export default Index

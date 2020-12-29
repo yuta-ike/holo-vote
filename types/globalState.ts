@@ -11,6 +11,7 @@ type GlobalState = {
   topMessage: Record<string, string>
   footerMessage: Record<string, string>
   errorMessage: string
+  voteErrorMessage: string
 }
 
 export default GlobalState

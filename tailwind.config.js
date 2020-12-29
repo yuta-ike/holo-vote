@@ -36,6 +36,8 @@ module.exports = {
       scale: ['focus-visible', 'active', 'disabled'],
       cursor: ['focus-visible', 'active', 'disabled'],
       letterSpacing: ['hover'],
+      textColor: ['disabled'],
+      backgroundColor: ['disabled'],
     },
   },
   plugins: [],
