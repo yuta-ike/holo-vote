@@ -249,10 +249,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   //   nominateNo: 170,
   // }
 
-  return {
-    props: { words: [...words, word], nominateNum: words.length },
-    revalidate: 60 * 60, // 1h
-  }
+  // return {
+  //   props: { words: [...words, word], nominateNum: words.length },
+  //   revalidate: 60 * 60, // 1h
+  // }
 }
 
 export default Index
