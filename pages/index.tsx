@@ -214,45 +214,45 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  // const { db } = initAdminFirebase()
-  // const orderBy: [string, "asc" | "desc"] = process.env.NEXT_PUBLIC_VOTE_START === "START" ? ["nominateNo", "asc"] : ["createdAt", "desc"]
-  // const snapshots = await db().collection("words").orderBy(...orderBy).get()
-  // const wordData = snapshots.docs.filter(snapshot => snapshot.exists && snapshot.data().valid && snapshot.data().redirectId == null).map<any>(snapshot => ({ ...snapshot.data(), id: snapshot.id }))
-  // const words: Omit<SerializedWord, "comments">[] = wordData.map<Omit<SerializedWord, "comments">>((data) => ({
-  //   id: data.id,
-  //   content: data.content,
-  //   members: data.memberIds.map(id => members[id - 1]),
-  //   videos: data.videos,
-  //   createdAt: (data.createdAt.toDate() as Date).toISOString(),
-  //   nominateNo: data.nominateNo ?? null,
+  const { db } = initAdminFirebase()
+  const orderBy: [string, "asc" | "desc"] = process.env.NEXT_PUBLIC_VOTE_START === "START" ? ["nominateNo", "asc"] : ["createdAt", "desc"]
+  const snapshots = await db().collection("words").orderBy(...orderBy).get()
+  const wordData = snapshots.docs.filter(snapshot => snapshot.exists && snapshot.data().valid && snapshot.data().redirectId == null).map<any>(snapshot => ({ ...snapshot.data(), id: snapshot.id }))
+  const words: Omit<SerializedWord, "comments">[] = wordData.map<Omit<SerializedWord, "comments">>((data) => ({
+    id: data.id,
+    content: data.content,
+    members: data.memberIds.map(id => members[id - 1]),
+    videos: data.videos,
+    createdAt: (data.createdAt.toDate() as Date).toISOString(),
+    nominateNo: data.nominateNo ?? null,
+  }))
+  return {
+    props: { words, nominateNum: wordData.length },
+    revalidate: 60 * 60, // 1h
+  }
+
+  // const words: Omit<SerializedWord, "comments">[] = Array(10).fill(null).map((_, i) => ({
+  //   id: "test-id-" + i,
+  //   content: i === 0 ? "あぁいほぉうぃ〜…とうぎゃざ〜えば〜。グッドラック！！" : i === 1 ? "アピールして下さい" : "テストワード" + i,
+  //   members: Array(i <= 6 ? i + 1 : 2).fill(null).map((_, j) => members[i + j]),
+  //   videos: [],
+  //   createdAt: DateTime.local().toISO(),
+  //   nominateNo: 500 + i,
   // }))
-  // return {
-  //   props: { words, nominateNum: wordData.length },
-  //   revalidate: 60 * 60, // 1h
+
+  // const word = {
+  //   id: "YfNLvwpzMHArzXa7l3t7",
+  //   content: "へい！むな！",
+  //   members: [members[21 - 1], members[33 - 1], members[0]],
+  //   videos: [],
+  //   createdAt: DateTime.local().toISO(),
+  //   nominateNo: 170,
   // }
 
-  const words: Omit<SerializedWord, "comments">[] = Array(10).fill(null).map((_, i) => ({
-    id: "test-id-" + i,
-    content: i === 0 ? "あぁいほぉうぃ〜…とうぎゃざ〜えば〜。グッドラック！！" : i === 1 ? "アピールして下さい" : "テストワード" + i,
-    members: Array(i <= 6 ? i + 1 : 2).fill(null).map((_, j) => members[i + j]),
-    videos: [],
-    createdAt: DateTime.local().toISO(),
-    nominateNo: 500 + i,
-  }))
-
-  const word = {
-    id: "YfNLvwpzMHArzXa7l3t7",
-    content: "へい！むな！",
-    members: [members[21 - 1], members[33 - 1], members[0]],
-    videos: [],
-    createdAt: DateTime.local().toISO(),
-    nominateNo: 170,
-  }
-
-  return {
-    props: { words: [...words, word], nominateNum: words.length },
-    revalidate: 6 * 60 * 60, // 3h
-  }
+  // return {
+  //   props: { words: [...words, word], nominateNum: words.length },
+  //   revalidate: 6 * 60 * 60, // 3h
+  // }
 }
 
 export default Index
