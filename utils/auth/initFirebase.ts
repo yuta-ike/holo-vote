@@ -19,7 +19,7 @@ const initFirebase = () => {
   if (!firebase.apps.length) {
     firebase.initializeApp(config)
 
-    if(window != null){
+    if (process.browser){
       const remoteConfig = firebase.remoteConfig()
       remoteConfig.settings = {
         minimumFetchIntervalMillis: (process.env.NODE_ENV === "development" ? 10 : 60 * 60) * 1000,
