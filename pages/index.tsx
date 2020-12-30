@@ -228,7 +228,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   }))
   return {
     props: { words, nominateNum: wordData.length },
-    revalidate: 60 * 60, // 1h
+    revalidate: 12 * 60 * 60, // 12h
   }
 
   // const words: Omit<SerializedWord, "comments">[] = Array(10).fill(null).map((_, i) => ({

@@ -207,7 +207,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
     return {
       props: { words: wordsWithVotes, nominateNum: wordsWithVotes.length },
-      revalidate: 6 * 60 * 60, // 6h
+      revalidate: 12 * 60 * 60, // 12h
     }
 
     // const words: Omit<SerializedWord & { votes: Vote[] }, "comments">[] = Array(10).fill(null).map((_, i) => ({
