@@ -198,7 +198,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     }))
 
     const voteSnapshots = await Promise.all(words.map(word => db().collection("words").doc(word.id).collection("votes").get()))
-    const voteData = voteSnapshots.map(snapshots => snapshots.docs.map(snapshot => snapshot.data())) as Vote[][]
+    const voteData = voteSnapshots.map(snapshots => snapshots.docs.map(snapshot => ({
+      userId: snapshot.data().userId,
+      createdAt: (snapshot.data().createdAt.toDate() as Date).toISOString(),
+    }))) as Vote[][]
     
     const wordsWithVotes = words.map((word, i) => ({...word, votes: voteData[i]}))
 
