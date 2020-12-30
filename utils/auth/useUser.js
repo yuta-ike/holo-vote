@@ -10,7 +10,7 @@ import {
 } from './userCookies'
 import { mapUserData } from './mapUserData'
 
-initFirebase()
+// initFirebase()
 
 const useUser = () => {
   const [user, setUser] = useState()
@@ -62,4 +62,4 @@ const useUser = () => {
   return { user, logout }
 }
 
-export { useUser }
+export default useUser

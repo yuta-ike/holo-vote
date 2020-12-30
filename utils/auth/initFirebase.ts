@@ -33,8 +33,10 @@ const initFirebase = () => {
   }
   if(db == null) db = firebase.firestore()
   if(auth == null) auth = firebase.auth()
-  if(remoteConfig == null) remoteConfig = firebase.remoteConfig()
-  if(analytics == null) analytics = firebase.analytics()
+  if (process.browser){
+    if(analytics == null) analytics = firebase.analytics()
+    if(remoteConfig == null) remoteConfig = firebase.remoteConfig()
+  }
 
   return { db, auth, remoteConfig, analytics, firebase }
 }

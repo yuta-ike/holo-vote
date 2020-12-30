@@ -21,6 +21,7 @@ const VoteDialog: React.FC<Props> = ({ open, onClose, word }) => {
   const [voteCompleteDialogOpen, setVoteCompleteDialogOpen] = useState(false)
   const { globalStates: { user, todayVotes, voteStart, voteStartDate, voteErrorMessage }, incrementTodayVotes } = useGlobalStates()
   const [voteNum, setVoteNum] = useState(1)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const handleVote = async () => {
     const { firebase, db, auth } = initFirebase()
@@ -28,11 +29,15 @@ const VoteDialog: React.FC<Props> = ({ open, onClose, word }) => {
 
     if (uid == null || todayVotes >= MAX_VOTE_NUM) return
 
-    await Promise.all(Array(voteNum).fill(null).map(() => db.collection("words").doc(word.id).collection("votes").add({
-      userId: uid,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-    })))
-
+    try {
+      await Promise.all(Array(voteNum).fill(null).map(() => db.collection("words").doc(word.id).collection("votes").add({
+        userId: uid,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      })))
+    } catch {
+      setErrorMessage("申し訳ありません、エラーが発生しました。時間を空けて再度お試しください。")
+      return
+    }
     incrementTodayVotes(voteNum)
     setVoteNum(1)
 
@@ -84,6 +89,11 @@ const VoteDialog: React.FC<Props> = ({ open, onClose, word }) => {
                 {
                   voteErrorMessage != null && voteErrorMessage !== "" && (
                     <p className="mb-4 text-sm text-red-500">{voteErrorMessage}</p>
+                  )
+                }
+                {
+                  errorMessage != null && (
+                    <p className="mb-4 text-sm text-red-500">{errorMessage}</p>
                   )
                 }
                 <div className="flex flex-row items-center mb-4">

@@ -14,7 +14,7 @@ type Props = {
 }
 
 const Header: React.FC<Props> = ({ onClickNominate, onClickVote }) => {
-  const [scroll, setScroll] = useState(0)
+  const [scroll, setScroll] = useState <0 | 1 | 2 | 3>(0)
   const router = useRouter()
   const fullScreen = useIsSp()
   const { globalStates: { initialized, nominateEnd } } = useGlobalStates()
@@ -22,7 +22,17 @@ const Header: React.FC<Props> = ({ onClickNominate, onClickVote }) => {
   const [sortProps, setSortProps] = useSortProps()
   
   const handleScroll = throttle(() => {
-    setScroll(window.scrollY) //TODO: ここ指定域を超えているかだけでいい
+    if(window.scrollY > 1500){
+      setScroll(3)
+    }else if(window.scrollY > 100){
+      setScroll(2)
+    }else{
+      if(window.scrollY < 1) {
+        setScroll(0)
+      }else{
+        setScroll(1)
+      }
+    }
   }, 100)
 
   useEffect(() => {
@@ -30,14 +40,14 @@ const Header: React.FC<Props> = ({ onClickNominate, onClickVote }) => {
   }, [])
 
   useEffect(() => {
-    if (scroll > 1500 && sortProps.showWordJumpButton) {
+    if (scroll >= 3 && sortProps.showWordJumpButton) {
       setSortProps(prev => ({ ...prev, showWordJumpButton: false }))
     }
   }, [scroll])
 
   return (
     <>
-      <header className={`sticky top-0 h-16 sm:h-20 flex flex-row items-center p-4 justify-between bg-white z-40 transition-all ${scroll < 1 && fullScreen ? "shadow-none" : "shadow-md"}`}>
+      <header className={`sticky top-0 h-16 sm:h-20 flex flex-row items-center p-4 justify-between bg-white z-40 transition-all ${scroll === 0 /*&& fullScreen*/ ? "shadow-none sm:shadow-md" : "shadow-md"}`}>
         <Link href="/">
           <a className="mr-auto">【非公式】ホロライブ流行語大賞2020</a>
         </Link>
@@ -115,7 +125,7 @@ const Header: React.FC<Props> = ({ onClickNominate, onClickVote }) => {
               <a
                 className={`fixed bottom-16 px-8 py-3 bg-gradient-to-r from-primary to-primary-light text-white rounded-full shadow-2xl text-lg z-50
                     transform duration-200 transition-all focus-visible:outline-black focus:outline-none focus:shadow-none hover:scale-105 focus:scale-95
-                    ${scroll > 100 ? "translate-x-0 right-4" : "translate-x-full right-0"}`}
+                    ${scroll >= 2 ? "translate-x-0 right-4" : "translate-x-full right-0"}`}
               >
                 投票
               </a>
@@ -124,7 +134,7 @@ const Header: React.FC<Props> = ({ onClickNominate, onClickVote }) => {
             <button
               className={`fixed bottom-16 px-8 py-3 bg-gradient-to-r from-primary to-primary-light text-white rounded-full shadow-2xl text-lg z-50
                 transform duration-200 transition-all focus-visible:outline-black focus:outline-none focus:shadow-none hover:scale-105 focus:scale-95
-                ${scroll > 100 ? "translate-x-0 right-4" : "translate-x-full right-0"}`}
+                ${scroll >= 2 ? "translate-x-0 right-4" : "translate-x-full right-0"}`}
               onClick={onClickVote}
             >
               投票
@@ -134,7 +144,7 @@ const Header: React.FC<Props> = ({ onClickNominate, onClickVote }) => {
           <button
             className={`fixed bottom-16 px-5 py-3 bg-gradient-to-r from-primary to-primary-light text-white rounded-full shadow-2xl text-lg z-50
               transform duration-200 transition-all focus-visible:outline-black focus:outline-none focus:shadow-none hover:scale-105 focus:scale-95
-              ${scroll > 100 ? "translate-x-0 right-4" : "translate-x-full right-0"}`}
+              ${scroll >= 2 ? "translate-x-0 right-4" : "translate-x-full right-0"}`}
             onClick={onClickNominate}
           >
             ノミネート

@@ -42,17 +42,39 @@ const WordListItem: React.FC<Props> = ({ word, className = "", mode }) => {
               className={classNames("flex flex-col items-start border-solid border-gray-200 border-b sm:px-2 py-2 sm:py-4 cursor-pointer hover:bg-gray-50", className)}
             >
               <div className="flex flex-row justify-between items-center w-full py-1 sm:py-0 max-w-screen-lg mx-auto">
-                <div className="flex flex-col mr-2 w-20 justify-center flex-shrink-0">
-                  <div className="flex flex-row">
+                <div className="flex flex-col mr-2 w-16 sm:w-20 justify-center flex-shrink-0">
                   {
-                    word.members.slice(0, 2).map(member => (
-                      <Image key={member.id} onClick={handleOpenMemberDialog(member)} className="rounded-md bg-white" src={`/${member.imageAPath}`} width={70} height={70} />
-                    ))
-                  }
-                  </div>
-                  {
-                    word.members.length > 2 && (
-                      <p className="text-xs text-center mt-1 sm:text-md">+{word.members.length - 2}人</p>
+                    word.members.length === 1 ? (
+                      <Image key={word.members[0].id} onClick={handleOpenMemberDialog(word.members[0])} className="bg-white rounded-xl" objectFit="contain" src={`/${word.members[0].imageAPath}`} width={70} height={70} />
+                    ) : word.members.length === 2 ? (
+                      <div className="grid grid-cols-2 rounded-xl overflow-hidden">
+                        <Image key={word.members[0].id} onClick={handleOpenMemberDialog(word.members[0])} objectFit="cover" className="bg-white" src={`/${word.members[0].imageAPath}`} width={35} height={70} />
+                        <Image key={word.members[1].id} onClick={handleOpenMemberDialog(word.members[1])} objectFit="cover" className="bg-white" src={`/${word.members[1].imageAPath}`} width={35} height={70} />
+                      </div>
+                    ) : word.members.length === 3 ? (
+                      <div className="grid grid-cols-2 grid-rows-2 rounded-xl overflow-hidden">
+                        <div className="row-span-2 flex flex-row justify-end">
+                          <Image key={word.members[0].id} onClick={handleOpenMemberDialog(word.members[0])} objectFit="cover" className="bg-white" src={`/${word.members[0].imageAPath}`} width={40} height={70} />
+                        </div>
+                        <Image key={word.members[1].id} onClick={handleOpenMemberDialog(word.members[1])} objectFit="none" objectPosition="100% 0%" className="bg-white" src={`/${word.members[1].imageAPath}`} width={35} height={35} />
+                        <Image key={word.members[2].id} onClick={handleOpenMemberDialog(word.members[2])} objectFit="none" objectPosition="100% 0%" className="bg-white" src={`/${word.members[2].imageAPath}`} width={35} height={35} />
+                      </div>
+                    ) : word.members.length === 4 ? (
+                      <div className="grid grid-cols-2 grid-rows-2 rounded-xl overflow-hidden">
+                              <Image key={word.members[0].id} onClick={handleOpenMemberDialog(word.members[0])} objectFit="none" objectPosition="0% 0%" className="bg-white" src={`/${word.members[0].imageAPath}`} width={35} height={35} />
+                              <Image key={word.members[1].id} onClick={handleOpenMemberDialog(word.members[1])} objectFit="none" objectPosition="100% 0%" className="bg-white" src={`/${word.members[1].imageAPath}`} width={35} height={35} />
+                              <Image key={word.members[1].id} onClick={handleOpenMemberDialog(word.members[2])} objectFit="none" objectPosition="0% 0%" className="bg-white" src={`/${word.members[2].imageAPath}`} width={35} height={35} />
+                              <Image key={word.members[1].id} onClick={handleOpenMemberDialog(word.members[3])} objectFit="none" objectPosition="100% 0%" className="bg-white" src={`/${word.members[3].imageAPath}`} width={35} height={35} />
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 grid-rows-2 rounded-xl overflow-hidden">
+                                <Image key={word.members[0].id} onClick={handleOpenMemberDialog(word.members[0])} objectFit="none" objectPosition="0% 0%" className="bg-white" src={`/${word.members[0].imageAPath}`} width={35} height={35} />
+                                <Image key={word.members[1].id} onClick={handleOpenMemberDialog(word.members[1])} objectFit="none" objectPosition="100% 0%" className="bg-white" src={`/${word.members[1].imageAPath}`} width={35} height={35} />
+                                <Image key={word.members[1].id} onClick={handleOpenMemberDialog(word.members[2])} objectFit="none" objectPosition="0% 0%" className="bg-white" src={`/${word.members[2].imageAPath}`} width={35} height={35} />
+                        <div onClick={e => e.preventDefault()} className="flex items-center justify-center bg-white">
+                          <p className="text-xs text-center mt-1 sm:text-md font-bold align-middle">+{word.members.length - 4}人</p>
+                        </div>
+                      </div>
                     )
                   }
                 </div>

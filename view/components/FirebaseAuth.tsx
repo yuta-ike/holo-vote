@@ -4,6 +4,7 @@ import 'firebase/auth'
 import initFirebase from '../../utils/auth/initFirebase'
 import { setUserCookie } from '../../utils/auth/userCookies'
 import { mapUserData } from '../../utils/auth/mapUserData'
+import { useEffect } from 'react'
 
 // Init the Firebase app.
 initFirebase()
@@ -14,11 +15,11 @@ const firebaseAuthConfig: firebaseui.auth.Config = {
   // https://github.com/firebase/firebaseui-web#configure-oauth-providers
   signInOptions: [
     {
-      provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+      provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
       requireDisplayName: false,
     },
   ],
-  signInSuccessUrl: '/',
+  signInSuccessUrl: '/admin',
   credentialHelper: 'none',
   callbacks: {
     signInSuccessWithAuthResult: ({ user }, redirectUrl) => {

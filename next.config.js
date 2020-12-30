@@ -2,6 +2,9 @@ module.exports = {
   images: {
     domains: ['i.ytimg.com'],
   },
+  experimental: {
+    optimizeFonts: true,
+  },
   webpack: config => {
     config.node = {
       fs: 'empty',

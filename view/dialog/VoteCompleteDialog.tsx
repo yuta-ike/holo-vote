@@ -4,7 +4,6 @@ import Transition from './transition/Transition'
 import { GiPartyPopper } from 'react-icons/gi'
 import Word from '../../types/word'
 import { AiOutlineTwitter } from 'react-icons/ai'
-import { useRouter } from 'next/router'
 
 type Props = {
   open: boolean
@@ -13,7 +12,6 @@ type Props = {
 }
 
 const VoteCompleteDialog: React.FC<Props> = ({ open, onClose, word }) => {
-  const router = useRouter()
   const handleClose = () => {
     onClose()
   }
@@ -30,7 +28,7 @@ const VoteCompleteDialog: React.FC<Props> = ({ open, onClose, word }) => {
           <GiPartyPopper className="mx-auto" />
         </div>
         <a
-          href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`「${word.content}」に投票しました!`)}&url=https://${process.env.NEXT_PUBLIC_VERCEL_URL}${router.asPath}&hashtags=${encodeURIComponent(`ホロ流行語大賞_非公式,ホロライブ`)}`}
+          href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`「${word.content}」に投票しました!`)}&url=https://${process.env.NEXT_PUBLIC_VERCEL_URL}/word/${word.id}&hashtags=${encodeURIComponent(`ホロ流行語大賞_非公式,ホロライブ`)}`}
           className="px-4 py-2 my-4 rounded-sm border-twitter text-sm flex items-center
               transform transition-all bg-twitter text-white hover:shadow-md
               focus:outline-none focus-visible:outline-black active:shadow-none active:scale-95">
