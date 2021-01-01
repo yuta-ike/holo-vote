@@ -62,7 +62,7 @@ const VoteDialog: React.FC<Props> = ({ open, onClose, word }) => {
     if(voteNum > 1) setVoteNum(voteNum - 1)
   }
 
-  const ableToVote = voteStart && todayVotes <= MAX_VOTE_NUM
+  const ableToVote = voteStart && todayVotes < MAX_VOTE_NUM
 
   return (
     <>
