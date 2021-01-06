@@ -24,7 +24,7 @@ const NominateDialog: React.FC<Props> = ({ open, onClose }) => {
   const [memberDialogOpen, setMemberDialogOpen] = useState(false)
   const [completeDialogOpen, setCompleteDialogOpen] = useState(false)
   const [word, setWord] = useState("")
-  const [memberIds, setMemberIds] = useState([])
+  const [memberIds, setMemberIds] = useState<number[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const wordId = useRef<string>()
 
@@ -43,9 +43,10 @@ const NominateDialog: React.FC<Props> = ({ open, onClose }) => {
   }
 
   const handleSend = async () => {
-    if(disabled) return
+    if(disabled) return;
     setIsLoading(true)
     const { firebase, db, analytics, auth } = initFirebase()
+    if(auth.currentUser == null) return;
     const ref = await db.collection("words").add({
       content: word,
       memberIds,
