@@ -15,20 +15,27 @@ const videoIdUpload = async (req: NextApiRequest, res: NextApiResponse): Promise
     const { db } = initAdminFirebase()
     const snapshot = await db().collection("words").doc(wordId).get()
     const data = snapshot.data()
-    const videos: Video[] = data.videos
+    const videos: Video[] = data?.videos ?? []
 
     const apiRes = await youtube.videos.list({
       id: [videoId],
       part: ["snippet"],
     })
 
-    if (apiRes.data.items.length === 0){
+    const item = apiRes.data.items?.[0]
+
+    if (item == null){
       res.status(400).end()
       return
     }
 
-    const title = apiRes.data.items[0].snippet.title
-    const thumbnail = apiRes.data.items[0].snippet.thumbnails.high.url
+    const title = item.snippet?.title
+    const thumbnail = item.snippet?.thumbnails?.high?.url
+
+    if (title == null || thumbnail == null) {
+      res.status(400).end()
+      return
+    }
 
     const newVideos: Video[] = Array.from(new Set([...videos, { videoId, title, thumbnail }]))
     await db().collection("words").doc(wordId).update({
