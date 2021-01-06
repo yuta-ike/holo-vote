@@ -15,7 +15,7 @@ const WordCard: React.FC<Props> = ({ word }) => {
   const [voteDialogOpen, setVoteDialogOpen] = useState(false)
   const [member, setMember] = useState<Member | null>(null)
 
-  const handleClickVote = (e: MouseEvent<HTMLInputElement>) => {
+  const handleClickVote = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     setVoteDialogOpen(true)
   }
@@ -37,7 +37,7 @@ const WordCard: React.FC<Props> = ({ word }) => {
           <div className="flex flex-row overflow-x-scroll w-full flex-nowrap whitespace-nowrap items-center">
             {
               word.members.slice(0, 5).map(member => (
-                <Image key={member.id} onClick={handleOpenMemberDialog(member)} className="flex-shrink-0 rounded-full bg-white p-1 bg-clip-content" src={`/${member.imageAPath}`} width={70} height={70} />
+                <Image key={member.id} quality="60" onClick={handleOpenMemberDialog(member)} className="flex-shrink-0 rounded-full bg-white p-1 bg-clip-content" src={`/${member.imageAPath}`} width={70} height={70} />
               ))
             }
             {

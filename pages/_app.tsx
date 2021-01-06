@@ -9,6 +9,7 @@ import initFirebase from "../utils/auth/initFirebase"
 import GlobalStatesProvider from "../utils/context/GlobalStatesProvider"
 import SortPropProvider from "../utils/context/SortPropProvider"
 import isSameDay from "../utils/date/isSameDay"
+import HistoryIdsProvider from "../utils/context/HistoryIds"
 
 const defaultDescription = `ホロライブ流行語大賞2020（非公式）は、「ノミネート期間」と「投票期間」に分かれています。「ノミネート期間」では、ホロライブファンのみなさんから、ホロライブ流行語のノミネート（登録）を募集します。ノミネートされた言葉の中から投票を行い、流行語を決定します。投票は「投票期間」中にのみ可能です。`
 
@@ -18,7 +19,9 @@ const getRandomImage = (): string => MESSAGES[Math.floor((Math.random() * MESSAG
 
 const App: React.FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter()
-  const [globalStates, setGlobalStates] = useState<GlobalState>({ user: null, todayVotes: 0, nominateEnd: true, voteStart: true, initialized: false, description: defaultDescription, topMessage: {}, footerMessage: {}, voteStartDate: "", errorMessage: "", voteErrorMessage: "" })
+  const [globalStates, setGlobalStates] = useState<GlobalState>({
+    user: null, todayVotes: 0, nominateEnd: true, voteStart: true, initialized: false, description: defaultDescription,
+    topMessage: {}, footerMessage: {}, voteStartDate: "", errorMessage: "", voteErrorMessage: "" })
   useEffect(() => {
     const { auth, db, remoteConfig } = initFirebase()
 
@@ -57,8 +60,12 @@ const App: React.FC<AppProps> = ({ Component, pageProps }) => {
     auth.signInAnonymously()
   }, [])
 
-  const incrementTodayVotes = (num: number = 1) => setGlobalStates(prev => ({...prev, todayVotes: prev.todayVotes + num}))
-  
+  const incrementTodayVotes = (voteNum: number = 1) => {
+    setGlobalStates(prev => ({
+      ...prev,
+      todayVotes: prev.todayVotes + voteNum,
+    }))
+  }
 
   const [message, setMessage] = useState<string>(() => getRandomImage())
 
@@ -101,16 +108,18 @@ const App: React.FC<AppProps> = ({ Component, pageProps }) => {
     <>
       <GlobalStatesProvider value={{ globalStates, incrementTodayVotes }}>
         <SortPropProvider>
-          <Component {...pageProps}/>
-          {
-            loading &&
-            <div className="fixed top-0 left-0 w-screen h-screen bg-gray-50 bg-opacity-80 z-50 flex items-center justify-center">
-              <div className="flex flex-col items-center justify-center pb-10">
-                <p className="mb-4">{message}</p>
-                <div className="animate-ping inline-flex rounded-full bg-purple-400 opacity-75 w-4 h-4"/>
+          <HistoryIdsProvider>
+            <Component {...pageProps}/>
+            {
+              loading &&
+              <div className="fixed top-0 left-0 w-screen h-screen bg-gray-50 bg-opacity-80 z-50 flex items-center justify-center">
+                <div className="flex flex-col items-center justify-center pb-10">
+                  <p className="mb-4">{message}</p>
+                  <div className="animate-ping inline-flex rounded-full bg-purple-400 opacity-75 w-4 h-4"/>
+                </div>
               </div>
-            </div>
-          }
+            }
+          </HistoryIdsProvider>
         </SortPropProvider>
       </GlobalStatesProvider>
     </>

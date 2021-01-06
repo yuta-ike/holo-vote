@@ -10,7 +10,8 @@ type Word = {
   videos: Video[]
   createdAt: DateTime
   comments: Comment[]
-  nominateNo?: number
+  nominateNo: number
+  shortenUrl: string
 }
 
 export type SerializedWord = Omit<Word, "createdAt"> & {
@@ -18,6 +19,6 @@ export type SerializedWord = Omit<Word, "createdAt"> & {
 }
 
 export const serialize = (word: Word) => ({ ...word, createdAt: word.createdAt.toISO() })
-export const unserialize = (word: SerializedWord) => ({ ...word, createdAt: DateTime.fromISO(word.createdAt) })
+export const unserialize = <T extends { createdAt: SerializedWord["createdAt"] }>(word: T) => ({ ...word, createdAt: DateTime.fromISO(word.createdAt) })
 
 export default Word

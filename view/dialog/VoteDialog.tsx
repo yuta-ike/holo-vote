@@ -1,11 +1,13 @@
+import type { MouseEvent } from 'react'
+import React, { useState } from 'react'
 import { Dialog, DialogContent, DialogTitle } from '@material-ui/core'
 import classNames from 'classnames'
-import React, { useState } from 'react'
 import { AiFillPlusSquare, AiFillMinusSquare, AiOutlineLoading3Quarters } from 'react-icons/ai'
 import Word from '../../types/word'
 import initFirebase from '../../utils/auth/initFirebase'
 // import signInWithTwitter from '../../utils/auth/signInWithTwitter'
 import { useGlobalStates } from '../../utils/context/GlobalStatesProvider'
+import { useAddHistoryId } from '../../utils/context/HistoryIds'
 import Transition from './transition/Transition'
 import VoteCompleteDialog from './VoteCompleteDialog'
 
@@ -21,7 +23,8 @@ const VoteDialog: React.FC<Props> = ({ open, onClose, word }) => {
   const [voteCompleteDialogOpen, setVoteCompleteDialogOpen] = useState(false)
   const { globalStates: { user, todayVotes, voteStart, voteStartDate, voteErrorMessage }, incrementTodayVotes } = useGlobalStates()
   const [voteNum, setVoteNum] = useState(1)
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const addHisotryId = useAddHistoryId()
 
   const handleVote = async () => {
     const { firebase, db, auth } = initFirebase()
@@ -38,6 +41,8 @@ const VoteDialog: React.FC<Props> = ({ open, onClose, word }) => {
       setErrorMessage("申し訳ありません、エラーが発生しました。時間を空けて再度お試しください。")
       return
     }
+
+    addHisotryId(word.id)
     incrementTodayVotes(voteNum)
     setVoteNum(1)
 
@@ -52,12 +57,12 @@ const VoteDialog: React.FC<Props> = ({ open, onClose, word }) => {
     onClose()
   }
 
-  const handlePlusVoteNum = (e) => {
+  const handlePlusVoteNum = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     if(todayVotes + voteNum + 1 <= MAX_VOTE_NUM) setVoteNum(voteNum + 1)
   }
 
-  const handleMinusVoteNum = (e) => {
+  const handleMinusVoteNum = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     if(voteNum > 1) setVoteNum(voteNum - 1)
   }

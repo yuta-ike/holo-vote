@@ -30,8 +30,9 @@ import { useGlobalStates } from '../../utils/context/GlobalStatesProvider'
 import outLink from '../../utils/ga/outLink'
 import { firestore } from 'firebase-admin'
 import NotFoundError from '../../error/NotFoundError'
+import getShortenUrl from '../../utils/shortenUrl'
 
-type SerializedWord = Pick<Word, "id" | "content" | "members" | "videos"> & {
+type SerializedWord = Pick<Word, "id" | "content" | "members" | "videos" | "shortenUrl" | "nominateNo"> & {
   comments: SerializedComment[]
 }
 
@@ -50,7 +51,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
   if(_word == null){
     return null
   }
-  const [word, setWord] = useState<Pick<Word, "id" | "content" | "members" | "videos" | "comments">>({..._word, comments: _word.comments.map(comment => ({ ...comment, createdAt: DateTime.fromISO(comment.createdAt) }))})
+  const [word, setWord] = useState<Pick<Word, "id" | "content" | "members" | "videos" | "comments" | "shortenUrl" | "nominateNo">>({..._word, comments: _word.comments.map(comment => ({ ...comment, createdAt: DateTime.fromISO(comment.createdAt) }))})
   const [nominateDialogOpen, setNominateDialogOpen] = useState(false)
   const [selectedMember, setSelectedMember] = useState<null | Member>(null)
   const [voteDialogOpen, setVoteDialogOpen] = useState(false)
@@ -62,7 +63,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isSending, setIsSending] = useState(false)
   const { globalStates: { user } } = useGlobalStates()
-  const ref = useRef(null)
+  const ref = useRef<HTMLDivElement>(null)
 
   const disabled = comment.length === 0 || isSending
 
@@ -106,6 +107,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
 
   const sendComment = async (comment: string) => {
     const { firebase, db, auth } = initFirebase()
+    if(auth.currentUser == null) return;
     setIsSending(true)
     const ref = await db.collection("words").doc(word.id).collection("comments").add({
       content: comment,
@@ -131,6 +133,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
 
   const handleLikeAdd = async (commentId: string) => {
     const { firebase, db, auth } = initFirebase()
+    if (auth.currentUser == null) return;
     setLikedIds([...likedIds, commentId])
     await db.collection("words").doc(word.id).collection("comments").doc(commentId).update({
       like: firebase.firestore.FieldValue.arrayUnion(auth.currentUser.uid),
@@ -139,6 +142,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
 
   const handleLikeRemove = async (commentId: string) => {
     const { firebase, db, auth } = initFirebase()
+    if (auth.currentUser == null) return;
     setLikedIds(likedIds.filter(id => commentId !== id))
     await db.collection("words").doc(word.id).collection("comments").doc(commentId).update({
       like: firebase.firestore.FieldValue.arrayRemove(auth.currentUser.uid),
@@ -159,7 +163,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
     })
   }
 
-  const handleVideoAdd = async (videoId: string | null) => {
+  const handleVideoAdd = async (videoId?: string) => {
     if(videoId == null || (word.videos.find(video => video.videoId === videoId) != null)){
       setVideoDialogOpen(false)
       return
@@ -213,7 +217,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
                 {word.content}
               </blockquote>
               <a
-                href={`https://twitter.com/intent/tweet?url=https://${process.env.NEXT_PUBLIC_VERCEL_URL}${router.asPath.split("#")[0]}&hashtags=${encodeURIComponent(`ホロ流行語大賞_非公式,${word.members?.slice(0, 7).map(member => member.name).join(",") ?? ""}`)}`}
+                href={`https://twitter.com/intent/tweet?url=${word.shortenUrl}&hashtags=${encodeURIComponent(`ホロ流行語大賞_非公式,${word.members?.slice(0, 7).map(member => member.name).join(",") ?? ""}`)}`}
                 className="px-4 py-2 my-4 rounded-full border-twitter text-sm flex items-center
                     transform transition-all bg-twitter text-white hover:shadow-md
                     focus:outline-none focus-visible:outline-black active:shadow-none active:scale-95"
@@ -258,7 +262,7 @@ const WordPage: React.FC<Props> = ({ word: _word }) => {
                   {
                     word.videos?.map(video => (
                       <a href={`https://www.youtube.com/watch?v=${video.videoId}`} key={video.videoId} className="flex-none mx-2 my-4 w-52 hover:shadow-md p-2 rounded-md group min-w-0">
-                        <Image src={video.thumbnail} width={320} height={220} />
+                        {video.thumbnail != null && <Image src={video.thumbnail} width={320} height={220} />}
                         <h1 className="mb-2 text-sm group-hover:underline break-all">{video.title}</h1>
                       </a>
                     ))
@@ -393,6 +397,8 @@ const getWordData = async (wordId: string, db: typeof firestore) => {
   const wordData = wordSnapshot.data()
   const commentData = commentSnapshots.docs.map((snapshot) => ({ ...snapshot.data(), id: snapshot.id })) as any[]
 
+  if(wordData == null) throw new NotFoundError()
+
   if(wordData.redirectId != null){
     const redirectId: string = wordData.redirectId
     return redirectId
@@ -403,6 +409,8 @@ const getWordData = async (wordId: string, db: typeof firestore) => {
     content: wordData.content,
     members: wordData.memberIds.map((id: number) => members[id - 1]),
     videos: wordData.videos,
+    shortenUrl: wordData.shortenUrl,
+    nominateNo: wordData.nominateNo,
     comments: commentData.map<SerializedComment>((data, i) => ({
       id: data.id,
       serialNumber: i + 1,
@@ -423,8 +431,11 @@ export const getStaticPaths: GetStaticPaths<ParsedUrlQuery> = async () => {
   }
 }
 
-export const getStaticProps: GetStaticProps<Props, ParsedUrlQuery> = async ({ params: { wordId } }) => {
+
+export const getStaticProps: GetStaticProps<Props, ParsedUrlQuery> = async ({ params }) => {
   try{
+    const wordId = params?.wordId
+    if(wordId == null) throw new Error()
     const { db } = initAdminFirebase()
     const word = await getWordData(wordId, db)
     if(typeof word !== "string"){

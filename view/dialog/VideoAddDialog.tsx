@@ -9,7 +9,7 @@ import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 
 type Props = {
   open: boolean,
-  onClose: (videoId?: string) => void
+  onClose: (videoId?: string) => Promise<void>
 }
 
 const VideoAddDialog: React.FC<Props> = ({open, onClose}) => {

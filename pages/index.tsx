@@ -21,6 +21,7 @@ import { useSortProps } from '../utils/context/SortPropProvider'
 import PickUpCards from '../view/components/PickUpCards'
 import { DateTime } from 'luxon'
 import { FaListUl, FaThList } from 'react-icons/fa'
+import getShortenUrl from '../utils/shortenUrl'
 
 type Props = {
   words: Omit<SerializedWord, "comments">[]
@@ -29,7 +30,7 @@ type Props = {
 
 const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
   const router = useRouter()
-  const [words] = useState<Omit<Word, "comments">[]>(() => _words.map(unserialize))
+  const [words] = useState<Omit<Word, "comments">[]>(_words.map(unserialize))
   const [listWords, setListWords] = useState<Omit<Word, "comments">[]>([])
 
   const [nominateDialogOpen, setNominateDialogOpen] = useState(false)
@@ -60,7 +61,7 @@ const Index: React.FC<Props> = ({ words: _words, nominateNum }) => {
   
   useEffect(() => {
     const filterIds = sortProps.filter?.map(member => member.id)
-    const filtered = sortProps.filter == null ? words : words.filter(word => word.members.reduce((acc, member) => acc || filterIds.includes(member.id), false))
+    const filtered = sortProps.filter == null ? words : words.filter(word => word.members.reduce((acc: boolean, member) => acc || filterIds.includes(member.id), false))
     const sorted = sortProps.sort
       ? [...filtered.sort((a, b) => a.nominateNo > b.nominateNo ? 1 : a.nominateNo === b.nominateNo ? 0 : -1)]
       : [...filtered.sort((a, b) => a.nominateNo > b.nominateNo ? -1 : a.nominateNo === b.nominateNo ? 0 : 1)]
@@ -218,13 +219,15 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   const orderBy: [string, "asc" | "desc"] = process.env.NEXT_PUBLIC_VOTE_START === "START" ? ["nominateNo", "asc"] : ["createdAt", "desc"]
   const snapshots = await db().collection("words").orderBy(...orderBy).get()
   const wordData = snapshots.docs.filter(snapshot => snapshot.exists && snapshot.data().valid && snapshot.data().redirectId == null).map<any>(snapshot => ({ ...snapshot.data(), id: snapshot.id }))
+
   const words: Omit<SerializedWord, "comments">[] = wordData.map<Omit<SerializedWord, "comments">>((data) => ({
     id: data.id,
     content: data.content,
-    members: data.memberIds.map(id => members[id - 1]),
+    members: data.memberIds.map((id: number) => members[id - 1]),
     videos: data.videos,
     createdAt: (data.createdAt.toDate() as Date).toISOString(),
     nominateNo: data.nominateNo ?? null,
+    shortenUrl: data.shortenUrl,
   }))
   return {
     props: { words, nominateNum: wordData.length },

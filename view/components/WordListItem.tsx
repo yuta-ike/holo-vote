@@ -20,7 +20,7 @@ const WordListItem: React.FC<Props> = ({ word, className = "", mode }) => {
   const [voteDialogOpen, setVoteDialogOpen] = useState(false)
   const [member, setMember] = useState<Member | null>(null)
   
-  const handleClickVote = (e: MouseEvent<HTMLInputElement>) => {
+  const handleClickVote = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     setVoteDialogOpen(true)
     const { analytics } = initFirebase()
@@ -45,26 +45,26 @@ const WordListItem: React.FC<Props> = ({ word, className = "", mode }) => {
                 <div className="flex flex-col mr-2 w-16 sm:w-20 justify-center flex-shrink-0">
                   {
                     word.members.length === 1 ? (
-                      <Image onClick={handleOpenMemberDialog(word.members[0])} className="bg-white rounded-xl" objectFit="contain" src={`/${word.members[0].imageAPath}`} width={70} height={70} />
+                      <Image quality="50" onClick={handleOpenMemberDialog(word.members[0])} className="bg-white rounded-xl" objectFit="contain" src={`/${word.members[0].imageAPath}`} width={70} height={70} />
                     ) : word.members.length === 2 ? (
                       <div className="grid grid-cols-2 rounded-xl overflow-hidden">
-                        <Image onClick={handleOpenMemberDialog(word.members[0])} objectFit="cover" className="bg-white" src={`/${word.members[0].imageAPath}`} width={35} height={70} />
-                        <Image onClick={handleOpenMemberDialog(word.members[1])} objectFit="cover" className="bg-white" src={`/${word.members[1].imageAPath}`} width={35} height={70} />
+                          <Image quality="50" onClick={handleOpenMemberDialog(word.members[0])} objectFit="cover" className="bg-white" src={`/${word.members[0].imageAPath}`} width={35} height={70} />
+                          <Image quality="50" onClick={handleOpenMemberDialog(word.members[1])} objectFit="cover" className="bg-white" src={`/${word.members[1].imageAPath}`} width={35} height={70} />
                       </div>
                     ) : word.members.length === 3 ? (
                       <div className="grid grid-cols-2 grid-rows-2 rounded-xl overflow-hidden">
                         <div className="row-span-2 flex flex-row justify-end">
-                          <Image onClick={handleOpenMemberDialog(word.members[0])} objectFit="cover" className="bg-white" src={`/${word.members[0].imageAPath}`} width={40} height={70} />
+                          <Image quality="50" onClick={handleOpenMemberDialog(word.members[0])} objectFit="cover" className="bg-white" src={`/${word.members[0].imageAPath}`} width={40} height={70} />
                         </div>
-                        <Image onClick={handleOpenMemberDialog(word.members[1])} objectFit="none" objectPosition="50% 0%" className="bg-white" src={`/${word.members[1].imageAPath}`} width={35} height={35} />
-                        <Image onClick={handleOpenMemberDialog(word.members[2])} objectFit="none" objectPosition="50% 0%" className="bg-white" src={`/${word.members[2].imageAPath}`} width={35} height={35} />
+                        <Image quality="50" onClick={handleOpenMemberDialog(word.members[1])} objectFit="none" objectPosition="50% 0%" className="bg-white" src={`/${word.members[1].imageAPath}`} width={35} height={35} />
+                        <Image quality="50" onClick={handleOpenMemberDialog(word.members[2])} objectFit="none" objectPosition="50% 0%" className="bg-white" src={`/${word.members[2].imageAPath}`} width={35} height={35} />
                       </div>
                     ) : word.members.length === 4 ? (
                       <div className="grid grid-cols-2 grid-rows-2 rounded-xl overflow-hidden">
-                        <Image onClick={handleOpenMemberDialog(word.members[0])} objectFit="none" objectPosition="50% 0%" className="bg-white" src={`/${word.members[0].imageAPath}`} width={35} height={35} />
-                        <Image onClick={handleOpenMemberDialog(word.members[1])} objectFit="none" objectPosition="50% 0%" className="bg-white" src={`/${word.members[1].imageAPath}`} width={35} height={35} />
-                        <Image onClick={handleOpenMemberDialog(word.members[2])} objectFit="none" objectPosition="50% 0%" className="bg-white" src={`/${word.members[2].imageAPath}`} width={35} height={35} />
-                        <Image onClick={handleOpenMemberDialog(word.members[3])} objectFit="none" objectPosition="50% 0%" className="bg-white" src={`/${word.members[3].imageAPath}`} width={35} height={35} />
+                        <Image quality="50" onClick={handleOpenMemberDialog(word.members[0])} objectFit="none" objectPosition="50% 0%" className="bg-white" src={`/${word.members[0].imageAPath}`} width={35} height={35} />
+                        <Image quality="50" onClick={handleOpenMemberDialog(word.members[1])} objectFit="none" objectPosition="50% 0%" className="bg-white" src={`/${word.members[1].imageAPath}`} width={35} height={35} />
+                        <Image quality="50" onClick={handleOpenMemberDialog(word.members[2])} objectFit="none" objectPosition="50% 0%" className="bg-white" src={`/${word.members[2].imageAPath}`} width={35} height={35} />
+                        <Image quality="50" onClick={handleOpenMemberDialog(word.members[3])} objectFit="none" objectPosition="50% 0%" className="bg-white" src={`/${word.members[3].imageAPath}`} width={35} height={35} />
                       </div>
                     ) : (
                       <div className="grid grid-cols-2 grid-rows-2 rounded-xl overflow-hidden">
