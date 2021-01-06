@@ -1,30 +1,5 @@
 import React from 'react'
-import { useState } from 'react'
-import Word from '../types/word'
 import { useGlobalStates } from '../utils/context/GlobalStatesProvider'
-import ReportDialog from '../view/dialog/ReportDialog'
-
-const word: Omit<Omit<Word, "createdAt">, "comments"> = {
-  id: '999',
-  videos: [],
-  content: "テストワード",
-  members: [{
-    id: 999,
-    name: 'name',
-    chineseName: '',
-    englishName: 'englishName',
-    gen: ['0th'],
-    catchphrase: 'catcphrase',
-    description: 'description',
-    youtubeId: 'youtubeId',
-    bilibiliId: '',
-    twitterId: 'twitterId',
-    twitterHasTags: [''],
-    imageAPath: 'imageAPath',
-    imageBPath: 'imageBPath',
-  }]
-}
-
 
 const Page404 = () => {
   const { globalStates: { errorMessage } } = useGlobalStates()
