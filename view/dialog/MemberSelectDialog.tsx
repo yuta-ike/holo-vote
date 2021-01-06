@@ -24,7 +24,7 @@ type Props = {
 
 const MemberSelectDialog: React.FC<Props> = ({ open, onClose, init = [], allowEmpty = false }) => {
   const [selected, { toggle }, setItem] = useSet<number>(init)
-  const ref = useRef(null)
+  const ref = useRef<HTMLDivElement>(null)
 
   const handleToggle = (id: number) => {
     toggle(id)
@@ -73,7 +73,7 @@ const MemberSelectDialog: React.FC<Props> = ({ open, onClose, init = [], allowEm
           }
         `}</style>
         {
-          Object.entries(categorizedMembers).map(([gen, members]: [Generation, Member[]]) => (
+          (Object.entries(categorizedMembers) as [Generation, Member[]][]).map(([gen, members]: [Generation, Member[]]) => (
             <section key={gen} className="mt-2">
               <div className="mx-4">{genToDisplay(gen)}</div>
               <div className="scroll-wrapper flex flex-row flex-nowrap mb-4 overflow-x-scroll overscroll-x-contain whitespace-nowrap w-full px-2">
