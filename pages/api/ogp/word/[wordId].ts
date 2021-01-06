@@ -36,10 +36,10 @@ const createOgp = async (req: NextApiRequest, res: NextApiResponse): Promise<voi
   }
 
   const data = snapshot.data()
-  const word: Omit<Word, "comments" | "videos" | "createdAt"> = {
+  const word: Omit<Word, "comments" | "videos" | "createdAt" | "nominateNo" | "shortenUrl"> = {
     id: snapshot.id,
-    content: data.content,
-    members: data.memberIds.map((id: number) => members[id - 1]),
+    content: data?.content ?? "",
+    members: data?.memberIds.map((id: number) => members[id - 1]) ?? [],
   }
 
   const canvas = createCanvas(WIDTH, HEIGHT)
