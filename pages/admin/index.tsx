@@ -21,7 +21,7 @@ type Props = {
   nominateNum: number
 }
 
-const admin = ({ words: _words }) => {
+const admin: React.FC<Props> = ({ words: _words }) => {
   const router = useRouter()
   const [authed, setAuthed] = useState(false)
   
@@ -190,11 +190,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     const words: Omit<SerializedWord, "comments">[] = wordData.map<Omit<SerializedWord, "comments">>((data) => ({
       id: data.id,
       content: data.content,
-      members: data.memberIds.map(id => members[id - 1]),
+      members: data.memberIds.map((id: any) => members[id - 1]),
       videos: data.videos,
       createdAt: (data.createdAt.toDate() as Date).toISOString(),
       kana: data.kana ?? null,
       redirectId: data.redirectId ?? null,
+      nominateNo: data.nominateNo,
+      shortenUrl: data.shortenUrl
     }))
 
     const voteSnapshots = await Promise.all(words.map(word => db().collection("words").doc(word.id).collection("votes").get()))
