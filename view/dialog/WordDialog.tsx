@@ -12,18 +12,6 @@ type Props = {
 }
 
 const WordDialog: React.FC<Props> = ({ open, onClose, word }) => {
-  // const url = "https://www.youtube.com/watch?v=Mbf2qj8Amxg";
-
-  // fetch(url).then(res => res.text()).then(text => {
-  //   const el = new DOMParser().parseFromString(text, "text/html")
-  //   const headEls = (el.head.children)
-  //   Array.from(headEls).map(v => {
-  //     const prop = v.getAttribute('property')
-  //     if (!prop) return;
-  //     console.log(prop, v.getAttribute("content"))
-  //   })
-  // })
-  
   return (
     <Dialog
       open={open}

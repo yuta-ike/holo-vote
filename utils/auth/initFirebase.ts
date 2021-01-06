@@ -13,7 +13,7 @@ const config = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 }
 
-let db: firebase.firestore.Firestore, auth: firebase.auth.Auth, remoteConfig: firebase.remoteConfig.RemoteConfig, analytics: firebase.analytics.Analytics = null
+let db: firebase.firestore.Firestore, auth: firebase.auth.Auth, remoteConfig: firebase.remoteConfig.RemoteConfig, analytics: firebase.analytics.Analytics;
 
 const initFirebase = () => {
   if (!firebase.apps.length) {

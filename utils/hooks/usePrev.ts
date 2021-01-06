@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-const usePrev = <T>(_currState: T, init: T = null) => {
+const usePrev = <T>(_currState: T, init: (T | null) = null) => {
   const [currState, setCurrState] = useState(_currState)
   const [prevState, setPrevState] = useState(init)
   useEffect(() => {
