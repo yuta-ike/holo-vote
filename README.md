@@ -1,3 +1,5 @@
+動作URL: https://holo-vote.vercel.app/
+
 # Example: Firebase authentication with a serverless API
 
 This example includes Firebase authentication and serverless [API routes](https://nextjs.org/docs/api-routes/introduction).
